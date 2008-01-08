@@ -1,25 +1,25 @@
 Summary:	gvfs - userspace virtual filesystem
 Name:		gvfs
-Version:	0.1.0
+Version:	0.1.1
 Release:	1
 License:	LGPL v2
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.1/%{name}-%{version}.tar.bz2
-# Source0-md5:	6477f9f37de9310d43a3c89414832a9d
+# Source0-md5:	e14f51b6be1e477c182758a7c169697a
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.15.0
+BuildRequires:	glib2-devel >= 1:2.15.1
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.9
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libsmbclient-devel
 BuildRequires:	libtool
-BuildRequires:	pkg-config
+BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2 >= 1:2.15.0
+Requires:	glib2 >= 1:2.15.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_libexecdir	%{_libdir}/%{name}
@@ -47,6 +47,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	glib2-devel >= 1:2.15.1
 
 %description devel
 Header files for gvfs library.
@@ -85,23 +86,22 @@ rm -rf $RPM_BUILD_ROOT
 %files -f gvfs.lang
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README TODO
-
-%dir %{_sysconfdir}/gvfs
-%dir %{_sysconfdir}/gvfs/mounts
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gvfs/mounts/*
 %attr(755,root,root) %{_bindir}/*
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd*
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libdir}/gio/modules/*.so
 %{_datadir}/dbus-1/services/gvfs-daemon.service
+%dir %{_datadir}/gvfs
+%dir %{_datadir}/gvfs/mounts
+%{_datadir}/gvfs/mounts/*.mount
 
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so.*.*.*
-%{_libdir}/libgvfscommon.la
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so
+%{_libdir}/libgvfscommon.la
 %{_includedir}/gvfs-client
