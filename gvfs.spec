@@ -1,4 +1,5 @@
 Summary:	gvfs - userspace virtual filesystem
+Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	0.1.1
 Release:	1
@@ -19,7 +20,6 @@ BuildRequires:	libsmbclient-devel
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2 >= 1:2.15.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_libexecdir	%{_libdir}/%{name}
@@ -31,10 +31,19 @@ seamlessly adds gvfs support to all applications using the gio API. It
 also supports exposing the gvfs mounts to non-gio applications using
 FUSE.
 
+%description -l pl.UTF-8
+gvfs to wirtualny system plik w przestrzeni użytkownika. Montowanie w
+nim działa jako oddzielny proces, z którym komunikacja odbywa się
+przez D-BUS. Zawiera moduł gio dodający w sposób przezroczysty obsługę
+gfvs-a do wszystkich aplikacji używających API gio. Obsługuje także
+montowania gvfs przy użyciu FUSE z myślą o aplikacjach nie
+korzystających z gio.
+
 %package libs
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
+Requires:	glib2 >= 1:2.15.1
 
 %description libs
 gvfs libraries.
