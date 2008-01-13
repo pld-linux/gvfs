@@ -7,8 +7,9 @@ License:	LGPL v2
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.1/%{name}-%{version}.tar.bz2
 # Source0-md5:	e14f51b6be1e477c182758a7c169697a
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.15.1
@@ -16,7 +17,7 @@ BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.9
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
-BuildRequires:	libsmbclient-devel
+BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
