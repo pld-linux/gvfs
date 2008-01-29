@@ -1,26 +1,25 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.1.4
+Version:	0.1.6
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.1/%{name}-%{version}.tar.bz2
-# Source0-md5:	a227be3f37bfc1eda3ba53e6483218a4
+# Source0-md5:	8a831137509db3e8a00317bd994e7391
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.15.2
+BuildRequires:	glib2-devel >= 1:2.15.4
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.9
 BuildRequires:	intltool >= 0.37.0
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libsmbclient-devel >= 3.0
-# not released yet
-#BuildRequires:	libsoup-devel >= 2.3.0
+BuildRequires:	libsoup-devel >= 2.3.0.1
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
@@ -47,7 +46,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.15.2
+Requires:	glib2 >= 1:2.15.4
 
 %description libs
 gvfs libraries.
@@ -60,7 +59,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.15.2
+Requires:	glib2-devel >= 1:2.15.4
 
 %description devel
 Header files for gvfs library.
