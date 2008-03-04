@@ -1,16 +1,17 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.1.8
+Version:	0.1.11
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.1/%{name}-%{version}.tar.bz2
-# Source0-md5:	2bcfd0d39d27397be4fbb7ff42a57aab
+# Source0-md5:	fd55418c31bb95f7f5f217f475887e86
 BuildRequires:	GConf2-devel >= 2.21.90
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
+BuildRequires:	bluez-libs-devel >= 3.12
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
@@ -133,6 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
+%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
@@ -147,10 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/computer.mount
 %{_datadir}/gvfs/mounts/dav.mount
 %{_datadir}/gvfs/mounts/dns-sd.mount
+%{_datadir}/gvfs/mounts/ftp.mount
 %{_datadir}/gvfs/mounts/gphoto2.mount
 %{_datadir}/gvfs/mounts/http.mount
 %{_datadir}/gvfs/mounts/localtest.mount
 %{_datadir}/gvfs/mounts/network.mount
+%{_datadir}/gvfs/mounts/obexftp.mount
 %{_datadir}/gvfs/mounts/sftp.mount
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
