@@ -1,13 +1,13 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.1.11
+Version:	0.2.0.1
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.1/%{name}-%{version}.tar.bz2
-# Source0-md5:	fd55418c31bb95f7f5f217f475887e86
-BuildRequires:	GConf2-devel >= 2.21.90
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.2/%{name}-%{version}.tar.bz2
+# Source0-md5:	52efdadf6632b9260cbb3c8cbb6076c0
+BuildRequires:	GConf2-devel >= 2.22.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -15,8 +15,8 @@ BuildRequires:	bluez-libs-devel >= 3.12
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.15.6
-BuildRequires:	gnome-keyring-devel >= 2.21.92
+BuildRequires:	glib2-devel >= 1:2.16.0
+BuildRequires:	gnome-keyring-devel >= 2.22.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
 BuildRequires:	intltool >= 0.37.0
@@ -24,7 +24,7 @@ BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libgphoto2-devel
 BuildRequires:	libsmbclient-devel >= 3.0
-BuildRequires:	libsoup-devel >= 2.3.0.1
+BuildRequires:	libsoup-devel >= 2.4.0
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
@@ -51,7 +51,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.15.6
+Requires:	glib2 >= 1:2.16.0
 
 %description libs
 gvfs libraries.
@@ -64,7 +64,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.15.6
+Requires:	glib2-devel >= 1:2.16.0
 
 %description devel
 Header files for gvfs library.
