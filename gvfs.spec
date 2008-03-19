@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.2.0.1
+Version:	0.2.1
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.2/%{name}-%{version}.tar.bz2
-# Source0-md5:	52efdadf6632b9260cbb3c8cbb6076c0
+# Source0-md5:	039e796a721bb178dd1759af76be5c13
 BuildRequires:	GConf2-devel >= 2.22.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -15,11 +15,12 @@ BuildRequires:	bluez-libs-devel >= 3.12
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.16.0
+BuildRequires:	glib2-devel >= 1:2.16.1
 BuildRequires:	gnome-keyring-devel >= 2.22.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
 BuildRequires:	intltool >= 0.37.0
+BuildRequires:	libarchive-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libgphoto2-devel
@@ -51,7 +52,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.16.0
+Requires:	glib2 >= 1:2.16.1
 
 %description libs
 gvfs libraries.
@@ -64,7 +65,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.16.0
+Requires:	glib2-devel >= 1:2.16.1
 
 %description devel
 Header files for gvfs library.
@@ -115,6 +116,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gvfs-mount
 %attr(755,root,root) %{_bindir}/gvfs-move
 %attr(755,root,root) %{_bindir}/gvfs-open
+%attr(755,root,root) %{_bindir}/gvfs-rename
 %attr(755,root,root) %{_bindir}/gvfs-rm
 %attr(755,root,root) %{_bindir}/gvfs-save
 %attr(755,root,root) %{_bindir}/gvfs-trash
@@ -124,6 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
+%attr(755,root,root) %{_libexecdir}/gvfsd-archive
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-cdda
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
@@ -144,6 +147,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
+%{_datadir}/gvfs/mounts/archive.mount
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/cdda.mount
 %{_datadir}/gvfs/mounts/computer.mount
