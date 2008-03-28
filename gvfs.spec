@@ -1,19 +1,20 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.2.1
+Version:	0.2.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.2/%{name}-%{version}.tar.bz2
-# Source0-md5:	039e796a721bb178dd1759af76be5c13
+# Source0-md5:	084da50276a83b00725819799f4f1240
 BuildRequires:	GConf2-devel >= 2.22.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
 BuildRequires:	bluez-libs-devel >= 3.12
 BuildRequires:	cdparanoia-III-devel >= 1:10
-BuildRequires:	dbus-devel
+BuildRequires:	dbus-glib-devel
+BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.16.1
 BuildRequires:	gnome-keyring-devel >= 2.22.0
@@ -27,6 +28,7 @@ BuildRequires:	libgphoto2-devel
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-devel >= 2.4.0
 BuildRequires:	libtool
+BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
