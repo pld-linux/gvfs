@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	0.99.1
+Version:	0.99.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/0.99/%{name}-%{version}.tar.bz2
-# Source0-md5:	d1cd85461481171c8a4fc970d623fc59
+# Source0-md5:	be34d612c4d993e90022af1751c280c5
 BuildRequires:	GConf2-devel >= 2.22.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -16,7 +16,7 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.16.1
+BuildRequires:	glib2-devel >= 1:2.17.4
 BuildRequires:	gnome-keyring-devel >= 2.22.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
@@ -124,7 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gvfs-trash
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgiogconf.so
-%attr(755,root,root) %{_libdir}/gio/modules/libgiohal-volume-monitor.so
+%attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
@@ -145,10 +145,15 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
+%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-hal-volume-monitor
 %attr(755,root,root) %{_sysconfdir}/profile.d/gvfs-bash-completion.sh
 %{_datadir}/dbus-1/services/gvfs-daemon.service
+%{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.HalVolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
+%dir %{_datadir}/gvfs/remote-volume-monitors
 %{_datadir}/gvfs/mounts/archive.mount
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/cdda.mount
@@ -165,6 +170,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
+%{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%{_datadir}/gvfs/remote-volume-monitors/hal.monitor
 
 %files libs
 %defattr(644,root,root,755)
