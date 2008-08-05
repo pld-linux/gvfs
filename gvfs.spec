@@ -16,7 +16,7 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.17.4
+BuildRequires:	glib2-devel >= 1:2.17.6
 BuildRequires:	gnome-keyring-devel >= 2.22.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
