@@ -75,6 +75,18 @@ Header files for gvfs library.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe biblioteki gvfs.
 
+%package -n bash-completion-gvfs
+Summary:	bash-completion for gvfs
+Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla gvfs
+Group:		Applications/Shells
+Requires:	bash-completion
+
+%description -n bash-completion-gvfs
+This package provides bash-completion for gvfs.
+
+%description -n bash-completion-gvfs -l pl.UTF-8
+Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
+
 %prep
 %setup -q
 
@@ -85,7 +97,8 @@ Pliki nagłówkowe biblioteki gvfs.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-%configure
+%configure \
+	--with-bash-completion-dir=%{_sysconfdir}/bash_completion.d
 %{__make}
 
 %install
@@ -147,7 +160,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-hal-volume-monitor
-%attr(755,root,root) %{_sysconfdir}/profile.d/gvfs-bash-completion.sh
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.HalVolumeMonitor.service
@@ -183,3 +195,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libgvfscommon.so
 %{_libdir}/libgvfscommon.la
 %{_includedir}/gvfs-client
+
+%files -n bash-completion-gvfs
+%defattr(644,root,root,755)
+%{_sysconfdir}/bash_completion.d/gvfs-bash-completion.sh
