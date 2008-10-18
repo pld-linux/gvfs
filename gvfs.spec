@@ -2,11 +2,12 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.0.1
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.0/%{name}-%{version}.tar.bz2
 # Source0-md5:	0d123f87e3e660271cd9d11b8c592c5a
+Patch0:		%{name}-ods.patch
 BuildRequires:	GConf2-devel >= 2.22.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -31,6 +32,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
+Suggests:	obex-data-server >= 0.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_libexecdir	%{_libdir}/%{name}
@@ -89,6 +91,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %prep
 %setup -q
+%patch0 -p0
 
 %build
 %{__intltoolize}
