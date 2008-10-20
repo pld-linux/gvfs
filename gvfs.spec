@@ -1,14 +1,14 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.0.1
-Release:	2
+Version:	1.0.2
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.0/%{name}-%{version}.tar.bz2
-# Source0-md5:	0d123f87e3e660271cd9d11b8c592c5a
+# Source0-md5:	04c44757a265f787d6606655b6bbc593
 Patch0:		%{name}-ods.patch
-BuildRequires:	GConf2-devel >= 2.22.0
+BuildRequires:	GConf2-devel >= 2.24.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -18,16 +18,16 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.18.0
-BuildRequires:	gnome-keyring-devel >= 2.22.0
+BuildRequires:	gnome-keyring-devel >= 2.24.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
-BuildRequires:	intltool >= 0.37.0
+BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
-BuildRequires:	libgphoto2-devel
+BuildRequires:	libgphoto2-devel >= 2.4.0
 BuildRequires:	libsmbclient-devel >= 3.0
-BuildRequires:	libsoup-devel >= 2.23.91
+BuildRequires:	libsoup-devel >= 2.24.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
