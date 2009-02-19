@@ -1,24 +1,23 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.0.3
-Release:	2
+Version:	1.1.6
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.0/%{name}-%{version}.tar.bz2
-# Source0-md5:	a41e8b7d99e390cef8312f7ce5f312a5
-Patch0:		%{name}-ods.patch
-BuildRequires:	GConf2-devel >= 2.24.0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.1/%{name}-%{version}.tar.bz2
+# Source0-md5:	66c69088f63991a965e242e4a516bc2c
+BuildRequires:	GConf2-devel >= 2.25.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
-BuildRequires:	bluez-libs-devel >= 3.12
+BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.18.0
-BuildRequires:	gnome-keyring-devel >= 2.24.0
+BuildRequires:	glib2-devel >= 1:2.19.7
+BuildRequires:	gnome-keyring-devel >= 2.25.90
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
 BuildRequires:	intltool >= 0.40.0
@@ -27,7 +26,7 @@ BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libgphoto2-devel >= 2.4.0
 BuildRequires:	libsmbclient-devel >= 3.0
-BuildRequires:	libsoup-devel >= 2.24.0
+BuildRequires:	libsoup-gnome-devel >= 2.25.1
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
@@ -56,7 +55,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.18.0
+Requires:	glib2 >= 1:2.19.7
 
 %description libs
 gvfs libraries.
@@ -69,7 +68,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.18.0
+Requires:	glib2-devel >= 1:2.19.7
 
 %description devel
 Header files for gvfs library.
@@ -91,7 +90,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %prep
 %setup -q
-%patch0 -p0
 
 %build
 %{__intltoolize}
@@ -174,6 +172,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/cdda.mount
 %{_datadir}/gvfs/mounts/computer.mount
 %{_datadir}/gvfs/mounts/dav.mount
+%{_datadir}/gvfs/mounts/dav+sd.mount
 %{_datadir}/gvfs/mounts/dns-sd.mount
 %{_datadir}/gvfs/mounts/ftp.mount
 %{_datadir}/gvfs/mounts/gphoto2.mount
@@ -192,11 +191,15 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgvfscommon.so.0
+%attr(755,root,root) %{_libdir}/libgvfscommon-dnssd.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgvfscommon-dnssd.so.0
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so
+%attr(755,root,root) %{_libdir}/libgvfscommon-dnssd.so
 %{_libdir}/libgvfscommon.la
+%{_libdir}/libgvfscommon-dnssd.la
 %{_includedir}/gvfs-client
 
 %files -n bash-completion-gvfs
