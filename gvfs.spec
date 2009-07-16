@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.2.3
+Version:	1.3.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.2/%{name}-%{version}.tar.bz2
-# Source0-md5:	04a7f9c892b962cfedf0637dd2b01196
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.3/%{name}-%{version}.tar.bz2
+# Source0-md5:	73a7aecfba767f80146cbd5d37598e8b
 BuildRequires:	GConf2-devel >= 2.24.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -17,6 +17,7 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.20.0
+BuildRequires:	gnome-disk-utility-devel
 BuildRequires:	gnome-keyring-devel >= 2.26.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
@@ -135,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gvfs-rename
 %attr(755,root,root) %{_bindir}/gvfs-rm
 %attr(755,root,root) %{_bindir}/gvfs-save
+%attr(755,root,root) %{_bindir}/gvfs-set-attribute
 %attr(755,root,root) %{_bindir}/gvfs-trash
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgiogconf.so
@@ -152,6 +154,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
+%attr(755,root,root) %{_libexecdir}/gvfsd-metadata
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
@@ -160,9 +163,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-gdu-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-hal-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
+%{_datadir}/dbus-1/services/gvfs-metadata.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.GduVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.HalVolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
@@ -184,6 +190,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
+%{_datadir}/gvfs/remote-volume-monitors/gdu.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
 %{_datadir}/gvfs/remote-volume-monitors/hal.monitor
 
