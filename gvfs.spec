@@ -1,13 +1,13 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.2.3
+Version:	1.4.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.2/%{name}-%{version}.tar.bz2
-# Source0-md5:	04a7f9c892b962cfedf0637dd2b01196
-BuildRequires:	GConf2-devel >= 2.24.0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.4/%{name}-%{version}.tar.bz2
+# Source0-md5:	5c5086763873bbc6239af84722bf1afe
+BuildRequires:	GConf2-devel >= 2.28.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -16,8 +16,9 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.20.0
-BuildRequires:	gnome-keyring-devel >= 2.26.0
+BuildRequires:	glib2-devel >= 1:2.22.0
+BuildRequires:	gnome-disk-utility-devel >= 0.5
+BuildRequires:	gnome-keyring-devel >= 2.28.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	hal-devel >= 0.5.10
 BuildRequires:	intltool >= 0.40.0
@@ -30,6 +31,7 @@ BuildRequires:	libsoup-gnome-devel >= 2.26.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
+BuildRequires:	udev-glib-devel >= 138
 Requires:	%{name}-libs = %{version}-%{release}
 Suggests:	obex-data-server >= 0.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -55,7 +57,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.20.0
+Requires:	glib2 >= 1:2.22.0
 
 %description libs
 gvfs libraries.
@@ -68,7 +70,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.20.0
+Requires:	glib2-devel >= 1:2.22.0
 
 %description devel
 Header files for gvfs library.
@@ -110,6 +112,8 @@ rm -rf $RPM_BUILD_ROOT
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.la
 
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/ca@valencia
+
 %find_lang gvfs
 
 %clean
@@ -135,6 +139,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gvfs-rename
 %attr(755,root,root) %{_bindir}/gvfs-rm
 %attr(755,root,root) %{_bindir}/gvfs-save
+%attr(755,root,root) %{_bindir}/gvfs-set-attribute
 %attr(755,root,root) %{_bindir}/gvfs-trash
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgiogconf.so
@@ -152,6 +157,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
+%attr(755,root,root) %{_libexecdir}/gvfsd-metadata
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
@@ -160,9 +166,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-gdu-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-hal-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
+%{_datadir}/dbus-1/services/gvfs-metadata.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.GduVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.HalVolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
@@ -184,6 +193,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
+%{_datadir}/gvfs/remote-volume-monitors/gdu.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
 %{_datadir}/gvfs/remote-volume-monitors/hal.monitor
 
