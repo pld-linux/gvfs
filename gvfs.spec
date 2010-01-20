@@ -33,6 +33,8 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
 BuildRequires:	udev-glib-devel >= 138
 Requires:	%{name}-libs = %{version}-%{release}
+# for gvfs-gdu-volume-monitor:
+Requires:	DeviceKit-disks
 Suggests:	obex-data-server >= 0.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
