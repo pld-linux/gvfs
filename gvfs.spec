@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.5.3
+Version:	1.5.5
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.5/%{name}-%{version}.tar.bz2
-# Source0-md5:	e0540360ccc0943d6a0c93c79981deee
+# Source0-md5:	d4ae94acdea317d8a8bf88a793b8df3f
 BuildRequires:	GConf2-devel >= 2.28.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -16,8 +16,8 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.23.2
-BuildRequires:	gnome-disk-utility-devel >= 2.28.0
+BuildRequires:	glib2-devel >= 1:2.23.4
+BuildRequires:	gnome-disk-utility-devel >= 2.30.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
@@ -36,7 +36,7 @@ BuildRequires:	udev-glib-devel >= 138
 Requires(post,postun):	glib2 >= 1:2.23.3
 Requires:	%{name}-libs = %{version}-%{release}
 # for gvfs-gdu-volume-monitor:
-Requires:	DeviceKit-disks
+Requires:	udisks
 Suggests:	obex-data-server >= 0.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -61,7 +61,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.23.2
+Requires:	glib2 >= 1:2.23.4
 
 %description libs
 gvfs libraries.
@@ -74,7 +74,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.23.2
+Requires:	glib2-devel >= 1:2.23.4
 
 %description devel
 Header files for gvfs library.
@@ -108,6 +108,7 @@ rm -f po/en@shaw.po
 %{__autoheader}
 %{__automake}
 %configure \
+	--disable-silent-rules \
 	--with-bash-completion-dir=%{_sysconfdir}/bash_completion.d
 %{__make}
 
