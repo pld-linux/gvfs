@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.4.3
-Release:	4
+Version:	1.6.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.4/%{name}-%{version}.tar.bz2
-# Source0-md5:	2624e5e7d45efd6b742e90bfde24cd20
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.6/%{name}-%{version}.tar.bz2
+# Source0-md5:	fb533047ddd894ec5c811b005cb88a07
 BuildRequires:	GConf2-devel >= 2.28.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -16,25 +16,27 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.22.0
-BuildRequires:	gnome-disk-utility-devel >= 0.5
-BuildRequires:	gnome-keyring-devel >= 2.28.0
+BuildRequires:	glib2-devel >= 1:2.24.0
+BuildRequires:	gnome-disk-utility-devel >= 2.30.0
 BuildRequires:	gtk-doc >= 1.8
-BuildRequires:	hal-devel >= 0.5.10
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
+BuildRequires:	libgnome-keyring-devel
 BuildRequires:	libgphoto2-devel >= 2.4.0
+BuildRequires:	libimobiledevice-devel >= 0.9.7
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-gnome-devel >= 2.26.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	pkgconfig
+BuildRequires:	sed >= 4.0
 BuildRequires:	udev-glib-devel >= 138
+Requires(post,postun):	glib2 >= 1:2.24.0
 Requires:	%{name}-libs = %{version}-%{release}
 # for gvfs-gdu-volume-monitor:
-Requires:	DeviceKit-disks
+Requires:	udisks
 Suggests:	obex-data-server >= 0.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -59,7 +61,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.22.0
+Requires:	glib2 >= 1:2.24.0
 
 %description libs
 gvfs libraries.
@@ -72,7 +74,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.22.0
+Requires:	glib2-devel >= 1:2.24.0
 
 %description devel
 Header files for gvfs library.
@@ -95,6 +97,9 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %prep
 %setup -q
 
+%{__sed} -i -e 's/^en@shaw//' po/LINGUAS
+rm -f po/en@shaw.po
+
 %build
 %{__intltoolize}
 %{__libtoolize}
@@ -103,6 +108,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %{__autoheader}
 %{__automake}
 %configure \
+	--disable-silent-rules \
 	--with-bash-completion-dir=%{_sysconfdir}/bash_completion.d
 %{__make}
 
@@ -112,12 +118,22 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.{cache,la}
 
 %find_lang gvfs
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+umask 022
+%{_bindir}/gio-querymodules %{_libdir}/gio/modules
+exit 0
+
+%postun
+umask 022
+%{_bindir}/gio-querymodules %{_libdir}/gio/modules
+exit 0
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
@@ -147,6 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
+%attr(755,root,root) %{_libexecdir}/gvfsd-afc
 %attr(755,root,root) %{_libexecdir}/gvfsd-archive
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-cdda
@@ -164,18 +181,19 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
+%attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-gdu-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-hal-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
+%{_datadir}/dbus-1/services/org.gtk.Private.AfcVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GduVolumeMonitor.service
-%{_datadir}/dbus-1/services/org.gtk.Private.HalVolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
+%{_datadir}/gvfs/mounts/afc.mount
 %{_datadir}/gvfs/mounts/archive.mount
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/cdda.mount
@@ -193,9 +211,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
+%{_datadir}/gvfs/remote-volume-monitors/afc.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gdu.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
-%{_datadir}/gvfs/remote-volume-monitors/hal.monitor
 
 %files libs
 %defattr(644,root,root,755)
