@@ -1,13 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.6.6
+Version:	1.7.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.6/%{name}-%{version}.tar.bz2
-# Source0-md5:	e1f324c45ea07d630f85bd3199865fd9
-BuildRequires:	GConf2-devel >= 2.28.0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.7/%{name}-%{version}.tar.bz2
+# Source0-md5:	d8a57290a5d090b07cd2f23914f20f4e
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -16,7 +15,7 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.24.0
+BuildRequires:	glib2-devel >= 1:2.27.4
 BuildRequires:	gnome-disk-utility-devel >= 2.30.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
@@ -25,16 +24,18 @@ BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel
 BuildRequires:	libgnome-keyring-devel
 BuildRequires:	libgphoto2-devel >= 2.4.0
-BuildRequires:	libimobiledevice-devel >= 0.9.7
+BuildRequires:	libimobiledevice-devel >= 1.1.0
+BuildRequires:	libplist-devel >= 0.15
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-gnome-devel >= 2.26.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
+BuildRequires:	rpmbuild(macros) >= 1.592
 BuildRequires:	sed >= 4.0
 BuildRequires:	udev-glib-devel >= 138
-Requires(post,postun):	glib2 >= 1:2.24.0
+Requires(post,postun):	glib2 >= 1:2.26.0
 Requires:	%{name}-libs = %{version}-%{release}
 # for gvfs-gdu-volume-monitor:
 Requires:	udisks
@@ -62,7 +63,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.24.0
+Requires:	glib2 >= 1:2.27.4
 
 %description libs
 gvfs libraries.
@@ -75,7 +76,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.24.0
+Requires:	glib2-devel >= 1:2.27.4
 
 %description devel
 Header files for gvfs library.
@@ -97,9 +98,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %prep
 %setup -q
-
-%{__sed} -i -e 's/^en@shaw//' po/LINGUAS
-rm -f po/en@shaw.po
 
 %build
 %{__intltoolize}
@@ -127,11 +125,15 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.{cache,la}
 rm -rf $RPM_BUILD_ROOT
 
 %post
+%glib_compile_schemas
 umask 022
 %{_bindir}/gio-querymodules %{_libdir}/gio/modules
 exit 0
 
 %postun
+if [ "$1" = "0" ]; then
+	%glib_compile_schemas
+fi
 umask 022
 %{_bindir}/gio-querymodules %{_libdir}/gio/modules
 exit 0
@@ -161,7 +163,6 @@ exit 0
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
-%attr(755,root,root) %{_libdir}/gio/modules/libgiogconf.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-afc
@@ -215,6 +216,11 @@ exit 0
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gdu.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
+%{_datadir}/GConf/gsettings/gvfs-smb.convert
+%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
+%{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
+%{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
 
 %files libs
 %defattr(644,root,root,755)
