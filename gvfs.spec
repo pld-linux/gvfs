@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.7.2
+Version:	1.7.3
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.7/%{name}-%{version}.tar.bz2
-# Source0-md5:	d8a57290a5d090b07cd2f23914f20f4e
+# Source0-md5:	f6970ed6dd5378c59df9588bf0e04ffa
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -15,7 +15,7 @@ BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.27.4
+BuildRequires:	glib2-devel >= 1:2.28.0
 BuildRequires:	gnome-disk-utility-devel >= 2.30.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
@@ -63,7 +63,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.27.4
+Requires:	glib2 >= 1:2.28.0
 
 %description libs
 gvfs libraries.
@@ -76,7 +76,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.27.4
+Requires:	glib2-devel >= 1:2.28.0
 
 %description devel
 Header files for gvfs library.
