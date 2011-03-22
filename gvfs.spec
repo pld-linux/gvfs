@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.6.6
+Version:	1.6.7
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.6/%{name}-%{version}.tar.bz2
-# Source0-md5:	e1f324c45ea07d630f85bd3199865fd9
+# Source0-md5:	ac249ae10e38cf3d5f779624b81ad3b0
 BuildRequires:	GConf2-devel >= 2.28.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -161,7 +161,6 @@ exit 0
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
-%attr(755,root,root) %{_libdir}/gio/modules/libgiogconf.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-afc
