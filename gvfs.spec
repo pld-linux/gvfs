@@ -16,7 +16,7 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.28.0
-BuildRequires:	gnome-disk-utility-devel >= 2.30.0
+BuildRequires:	gnome-disk-utility-devel >= 3.0.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
