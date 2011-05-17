@@ -1,0 +1,605 @@
+diff -ruN gvfs-0.2.3.orig/client/gdaemonfile.c gvfs-0.2.3/client/gdaemonfile.c
+--- gvfs-0.2.3.orig/client/gdaemonfile.c	2008-04-07 21:27:44.000000000 -0400
++++ gvfs-0.2.3/client/gdaemonfile.c	2008-04-11 18:05:29.339838151 -0400
+@@ -1891,6 +1891,56 @@
+ 				   NULL,
+ 				   NULL, NULL, NULL,
+ 				   cancellable, &my_error);
++  dbus_message_unref (message);
++
++  if (reply == NULL)
++    {
++      if (g_error_matches (my_error, G_VFS_ERROR, G_VFS_ERROR_RETRY))
++	{
++	  g_error_free (my_error);
++	  goto retry;
++	}
++      g_propagate_error (error, my_error);
++      return FALSE;
++    }
++
++  dbus_message_unref (reply);
++  return TRUE;
++}
++
++static gboolean
++g_daemon_file_set_attributes_from_info (GFile *file,
++			                GFileInfo *info,
++			                GFileQueryInfoFlags flags,
++			                GCancellable *cancellable,
++			                GError **error)
++{
++  DBusMessage *message, *reply;
++  DBusMessageIter iter;
++  dbus_uint32_t flags_dbus;
++  GError *my_error;
++
++ retry:
++
++  message = create_empty_message (file, G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO, NULL, error);
++  if (!message)
++    return FALSE;
++
++  dbus_message_iter_init_append (message, &iter);
++
++  flags_dbus = flags;
++  dbus_message_iter_append_basic (&iter,
++				  DBUS_TYPE_UINT32,
++				  &flags_dbus);
++
++  _g_dbus_append_file_info (&iter, info);
++
++  my_error = NULL;
++  reply = _g_vfs_daemon_call_sync (message,
++				   NULL,
++				   NULL, NULL, NULL,
++				   cancellable, &my_error);
++  dbus_message_unref (message);
+ 
+   if (reply == NULL)
+     {
+@@ -2787,6 +2837,7 @@
+   iface->query_settable_attributes = g_daemon_file_query_settable_attributes;
+   iface->query_writable_namespaces = g_daemon_file_query_writable_namespaces;
+   iface->set_attribute = g_daemon_file_set_attribute;
++  iface->set_attributes_from_info = g_daemon_file_set_attributes_from_info;
+   iface->make_symbolic_link = g_daemon_file_make_symbolic_link;
+   iface->monitor_dir = g_daemon_file_monitor_dir;
+   iface->monitor_file = g_daemon_file_monitor_file;
+diff -ruN gvfs-0.2.3.orig/common/gvfsdaemonprotocol.h gvfs-0.2.3/common/gvfsdaemonprotocol.h
+--- gvfs-0.2.3.orig/common/gvfsdaemonprotocol.h	2008-04-07 21:27:43.000000000 -0400
++++ gvfs-0.2.3/common/gvfsdaemonprotocol.h	2008-04-11 11:15:44.656713399 -0400
+@@ -45,6 +45,7 @@
+ #define G_VFS_DBUS_MOUNT_OP_UPLOAD "Upload"
+ #define G_VFS_DBUS_MOUNT_OP_MOVE "Move"
+ #define G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTE "SetAttribute"
++#define G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO "SetAttributesFromInfo"
+ #define G_VFS_DBUS_MOUNT_OP_QUERY_SETTABLE_ATTRIBUTES "QuerySettableAttributes"
+ #define G_VFS_DBUS_MOUNT_OP_QUERY_WRITABLE_NAMESPACES "QueryWritableNamespaces"
+ 
+@@ -154,6 +155,8 @@
+   gboolean boolean;
+   guint32 uint32;
+   guint64 uint64;
++  gint32 int32;
++  gint64 int64;
+   gpointer ptr;
+ } GDbusAttributeValue;
+ 
+diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.c gvfs-0.2.3/daemon/gvfsbackend.c
+--- gvfs-0.2.3.orig/daemon/gvfsbackend.c	2008-04-07 21:27:43.000000000 -0400
++++ gvfs-0.2.3/daemon/gvfsbackend.c	2008-04-11 16:50:26.962838580 -0400
+@@ -517,6 +517,10 @@
+     job = g_vfs_job_set_attribute_new (connection, message, backend);
+   else if (dbus_message_is_method_call (message,
+ 					G_VFS_DBUS_MOUNT_INTERFACE,
++					G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO))
++    job = g_vfs_job_set_attributes_from_info_new (connection, message, backend);
++  else if (dbus_message_is_method_call (message,
++					G_VFS_DBUS_MOUNT_INTERFACE,
+ 					G_VFS_DBUS_MOUNT_OP_QUERY_SETTABLE_ATTRIBUTES))
+     job = g_vfs_job_query_attributes_new (connection, message, backend, FALSE);
+   else if (dbus_message_is_method_call (message,
+diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.h gvfs-0.2.3/daemon/gvfsbackend.h
+--- gvfs-0.2.3.orig/daemon/gvfsbackend.h	2008-04-07 21:27:43.000000000 -0400
++++ gvfs-0.2.3/daemon/gvfsbackend.h	2008-04-11 10:55:39.961713887 -0400
+@@ -67,6 +67,7 @@
+ typedef struct _GVfsJobUpload          GVfsJobUpload;
+ typedef struct _GVfsJobMove            GVfsJobMove;
+ typedef struct _GVfsJobSetAttribute    GVfsJobSetAttribute;
++typedef struct _GVfsJobSetAttributesFromInfo GVfsJobSetAttributesFromInfo;
+ typedef struct _GVfsJobQueryAttributes GVfsJobQueryAttributes;
+ typedef struct _GVfsJobCreateMonitor   GVfsJobCreateMonitor;
+ 
+@@ -339,6 +340,16 @@
+ 				 GFileAttributeType type,
+ 				 gpointer value_p,
+ 				 GFileQueryInfoFlags flags);
++  void (*set_attributes_from_info) (GVfsBackend *backend,
++                                GVfsJobSetAttributesFromInfo *job,
++                                const char *filename,
++                                GFileInfo *info,
++                                GFileQueryInfoFlags flags);
++  gboolean (*try_set_attributes_from_info) (GVfsBackend *backend,
++                                GVfsJobSetAttributesFromInfo *job,
++                                const char *filename,
++                                GFileInfo *info,
++                                GFileQueryInfoFlags flags);
+   void     (*create_dir_monitor)(GVfsBackend *backend,
+ 				 GVfsJobCreateMonitor *job,
+ 				 const char *filename,
+diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackendsftp.c
+--- gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c	2008-04-07 21:27:43.000000000 -0400
++++ gvfs-0.2.3/daemon/gvfsbackendsftp.c	2008-04-11 18:04:54.013712956 -0400
+@@ -3801,9 +3801,38 @@
+   g_file_attribute_info_list_add (list,
+ 				  G_FILE_ATTRIBUTE_UNIX_MODE,
+ 				  G_FILE_ATTRIBUTE_TYPE_UINT32,
+-				  G_FILE_ATTRIBUTE_INFO_COPY_WITH_FILE |
+ 				  G_FILE_ATTRIBUTE_INFO_COPY_WHEN_MOVED);
++  /* G_FILE_INFO_COPY_WHEN_MOVED to ensure that this is copied when
++     G_FILE_COPY_ALL_METADATA flag is set, but is not copied by default */
++  g_file_attribute_info_list_add (list,
++                                  G_FILE_ATTRIBUTE_TIME_ACCESS,
++				  G_FILE_ATTRIBUTE_TYPE_UINT32,
++				  G_FILE_ATTRIBUTE_INFO_COPY_WHEN_MOVED);
++  g_file_attribute_info_list_add (list,
++                                  G_FILE_ATTRIBUTE_TIME_CHANGED,
++                                  G_FILE_ATTRIBUTE_TYPE_UINT32,
++                                  G_FILE_ATTRIBUTE_INFO_COPY_WHEN_MOVED);
++  /* do not make uid/gid settable: it will cause massive problems
++     when G_FILE_COPY_ALL_METADATA is set. */
++
++  g_vfs_job_query_attributes_set_list (job, list);
++  g_vfs_job_succeeded (G_VFS_JOB (job));
++  g_file_attribute_info_list_unref (list);
+   
++  return TRUE;
++}
++
++static gboolean
++try_query_writable_namespaces (GVfsBackend *backend,
++			       GVfsJobQueryAttributes *job,
++			       const char *filename)
++{
++  GFileAttributeInfoList *list;
++
++  list = g_file_attribute_info_list_new ();
++
++  /* generally, we don't have any writable namespaces */
++
+   g_vfs_job_query_attributes_set_list (job, list);
+   g_vfs_job_succeeded (G_VFS_JOB (job));
+   g_file_attribute_info_list_unref (list);
+@@ -3838,6 +3867,8 @@
+   GVfsBackendSftp *op_backend = G_VFS_BACKEND_SFTP (backend);
+   GDataOutputStream *command;
+ 
++  /* atime and mtime must be set in a single sftp command. Therefore, to set them,
++     you must use try_set_attributes_from_info () */
+   if (strcmp (attribute, G_FILE_ATTRIBUTE_UNIX_MODE) != 0)
+     {
+       g_vfs_job_failed (G_VFS_JOB (job),
+@@ -3857,6 +3888,103 @@
+ }
+ 
+ static void
++set_attributes_from_info_reply (GVfsBackendSftp *backend,
++		                int reply_type,
++		                GDataInputStream *reply,
++		                guint32 len,
++		                GVfsJob *job,
++		                gpointer user_data)
++{
++  if (reply_type == SSH_FXP_STATUS)
++    result_from_status (job, reply, -1, -1);
++  else 
++    g_vfs_job_failed (job, G_IO_ERROR, G_IO_ERROR_FAILED,
++		      _("Invalid reply received"));
++}
++
++static gboolean
++try_set_attributes_from_info (GVfsBackend *backend,
++			      GVfsJobSetAttributesFromInfo *job,
++			      const char *filename,
++			      GFileInfo *info,
++			      GFileQueryInfoFlags flags)
++{
++  GVfsBackendSftp *op_backend = G_VFS_BACKEND_SFTP (backend);
++  GDataOutputStream *command;
++  char **attributes;
++  int i;
++  guint64 tmp64;
++  guint32 sftp_attributes = 0, sftp_mode, sftp_atime, sftp_mtime;
++  gboolean is_atime_set = FALSE, is_mtime_set = FALSE;
++
++  attributes = g_file_info_list_attributes (info, NULL);
++  for (i=0; attributes[i]; i++)
++    {
++      if (!strcmp (attributes[i], G_FILE_ATTRIBUTE_UNIX_MODE) )
++        {
++          sftp_attributes |= SSH_FILEXFER_ATTR_PERMISSIONS;
++          sftp_mode = 0777 & g_file_info_get_attribute_uint32 (info, attributes[i]);
++        }
++      else if (!strcmp (attributes[i], G_FILE_ATTRIBUTE_TIME_ACCESS) )
++        {
++          sftp_attributes |= SSH_FILEXFER_ATTR_ACMODTIME;
++          /* assume year < 2107 */
++          sftp_atime = 
++          is_atime_set = TRUE;
++        }
++      else if (!strcmp (attributes[i], G_FILE_ATTRIBUTE_TIME_CHANGED) )
++        {
++          sftp_attributes |= SSH_FILEXFER_ATTR_ACMODTIME;
++          /* assume year < 2107 */
++          sftp_mtime = g_file_info_get_attribute_uint64 (info, attributes[i]);
++          is_mtime_set = TRUE;
++        }
++      else
++        g_vfs_job_failed (G_VFS_JOB (job),
++			  G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
++			  _("Operation unsupported"));
++    }
++  g_strfreev (attributes);
++
++  /* must set atime and mtime in a single command */
++  if ( (is_atime_set && !is_mtime_set) || (is_mtime_set && !is_atime_set))
++    {
++      sftp_attributes &= ~SSH_FILEXFER_ATTR_ACMODTIME;
++      g_vfs_job_failed (G_VFS_JOB (job),
++                        G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
++                        _("Operation unsupported"));
++    }
++
++  if (sftp_attributes)
++    {
++      command = new_command_stream (op_backend,SSH_FXP_SETSTAT);
++      put_string (command, filename);
++      g_data_output_stream_put_uint32 (command, sftp_attributes, NULL, NULL);
++
++      if (sftp_attributes & SSH_FILEXFER_ATTR_PERMISSIONS)
++        g_data_output_stream_put_uint32 (command, sftp_mode, NULL, NULL);
++      if (sftp_attributes & SSH_FILEXFER_ATTR_ACMODTIME)
++        {
++          g_data_output_stream_put_uint32 (command, sftp_atime, NULL, NULL);
++          g_data_output_stream_put_uint32 (command, sftp_mtime, NULL, NULL);
++        }
++
++      queue_command_stream_and_free (op_backend, command, set_attributes_from_info_reply, G_VFS_JOB (job), NULL);
++    }
++  else
++    {
++      if (!i)
++        /* no attributes to set - return success */
++        g_vfs_job_succeeded (job);
++      else
++        g_vfs_job_failed (G_VFS_JOB (job),
++                          G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
++                          _("Operation unsupported"));
++    }
++  return TRUE;
++}
++
++static void
+ g_vfs_backend_sftp_class_init (GVfsBackendSftpClass *klass)
+ {
+   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+@@ -3886,5 +4014,7 @@
+   backend_class->try_delete = try_delete;
+   backend_class->try_set_display_name = try_set_display_name;
+   backend_class->try_query_settable_attributes = try_query_settable_attributes;
++  backend_class->try_query_writable_namespaces = try_query_writable_namespaces;
+   backend_class->try_set_attribute = try_set_attribute;
++  backend_class->try_set_attributes_from_info = try_set_attributes_from_info;
+ }
+diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.c
+--- gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c	1969-12-31 19:00:00.000000000 -0500
++++ gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.c	2008-04-11 11:07:34.213714426 -0400
+@@ -0,0 +1,220 @@
++/* GVFS - GNOME virtual filesystem layer
++ *
++ * Copyright (C) 2008 Alexandre Rostovtsev
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Author: Alexandre Rostovtsev <tetromino@gmail.com>
++ */
++
++#include <config.h>
++
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++
++#include <glib.h>
++#include <dbus/dbus.h>
++#include <glib/gi18n.h>
++#include "gvfsjobmove.h"
++#include "gdbusutils.h"
++#include "gvfsdaemonprotocol.h"
++#include "gvfsjobsetattribute.h"
++#include "gvfsjobsetattributesfrominfo.h"
++
++G_DEFINE_TYPE (GVfsJobSetAttributesFromInfo, g_vfs_job_set_attributes_from_info, G_VFS_TYPE_JOB_DBUS)
++
++typedef struct _GVfsJobSetAttributesFromInfoPrivate GVfsJobSetAttributesFromInfoPrivate;
++struct _GVfsJobSetAttributesFromInfoPrivate {
++    gboolean dispose_has_run;
++};
++
++#define G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_GET_PRIVATE(o) \
++  (G_TYPE_INSTANCE_GET_PRIVATE ((o), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO, GVfsJobSetAttributesFromInfoPrivate))
++
++static void         run          (GVfsJob        *job);
++static gboolean     try          (GVfsJob        *job);
++static DBusMessage *create_reply (GVfsJob        *job,
++				  DBusConnection *connection,
++				  DBusMessage    *message);
++
++static void
++g_vfs_job_set_attributes_from_info_dispose (GObject *object)
++{
++  GVfsJobSetAttributesFromInfo *job;
++  GVfsJobSetAttributesFromInfoPrivate *priv;
++
++  job = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO (object);
++  priv = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_GET_PRIVATE (object);
++
++  if (priv->dispose_has_run)
++    return;
++
++  priv->dispose_has_run = TRUE;
++
++  g_object_unref (job->info);
++
++  if (G_OBJECT_CLASS (g_vfs_job_set_attributes_from_info_parent_class)->dispose)
++    (*G_OBJECT_CLASS (g_vfs_job_set_attributes_from_info_parent_class)->dispose) (object);
++}
++
++static void
++g_vfs_job_set_attributes_from_info_finalize (GObject *object)
++{
++  GVfsJobSetAttributesFromInfo *job;
++
++  job = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO (object);
++
++  g_free (job->filename);
++
++  if (G_OBJECT_CLASS (g_vfs_job_set_attributes_from_info_parent_class)->finalize)
++    (*G_OBJECT_CLASS (g_vfs_job_set_attributes_from_info_parent_class)->finalize) (object);
++}
++
++static void
++g_vfs_job_set_attributes_from_info_class_init (GVfsJobSetAttributesFromInfoClass *klass)
++{
++  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
++  GVfsJobClass *job_class = G_VFS_JOB_CLASS (klass);
++  GVfsJobDBusClass *job_dbus_class = G_VFS_JOB_DBUS_CLASS (klass);
++
++  gobject_class->dispose = g_vfs_job_set_attributes_from_info_dispose;
++  gobject_class->finalize = g_vfs_job_set_attributes_from_info_finalize;
++  job_class->run = run;
++  job_class->try = try;
++  job_dbus_class->create_reply = create_reply;
++
++  g_type_class_add_private (klass, sizeof (GVfsJobSetAttributesFromInfoPrivate));
++}
++
++static void
++g_vfs_job_set_attributes_from_info_init (GVfsJobSetAttributesFromInfo *job)
++{
++  GVfsJobSetAttributesFromInfoPrivate *priv;
++
++  job->info = NULL;
++  priv = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_GET_PRIVATE (job);
++  priv->dispose_has_run = FALSE;
++}
++
++GVfsJob *
++g_vfs_job_set_attributes_from_info_new (DBusConnection *connection,
++				        DBusMessage *message,
++				        GVfsBackend *backend)
++{
++  GVfsJobSetAttributesFromInfo *job;
++  DBusMessage *reply;
++  DBusMessageIter iter, array_iter;
++  DBusError derror;
++  const gchar *filename = NULL;
++  gint filename_len;
++  GFileQueryInfoFlags flags;
++  gchar *attribute;
++  dbus_uint32_t flags_u32 = 0;
++  GFileAttributeType type;
++  GDbusAttributeValue value;
++  GFileInfo *info = NULL;
++  int i = 0;
++
++  dbus_error_init (&derror);
++
++  dbus_message_iter_init (message, &iter);
++
++  if (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_ARRAY &&
++      dbus_message_iter_get_element_type (&iter) == DBUS_TYPE_BYTE)
++    {
++      dbus_message_iter_recurse (&iter, &array_iter);
++      dbus_message_iter_get_fixed_array (&array_iter, &filename, &filename_len);
++    }
++
++  dbus_message_iter_next (&iter);
++
++  if (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_UINT32)
++    {
++      dbus_message_iter_get_basic (&iter, &flags_u32);
++      dbus_message_iter_next (&iter);
++    }
++
++  flags = flags_u32;
++
++  if (!filename || !(info = _g_dbus_get_file_info (&iter, NULL)))
++    {
++      reply = dbus_message_new_error (message,
++                                      DBUS_ERROR_FAILED,
++                                      _("Invalid dbus message"));
++      dbus_error_free (&derror);
++
++      dbus_connection_send (connection, reply, NULL);
++      return NULL;
++    }
++
++  job = g_object_new (G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO,
++		      "message", message,
++		      "connection", connection,
++		      NULL);
++
++  job->backend = backend;
++  job->filename = g_strndup (filename, filename_len);
++  job->flags = flags;
++  job->info = info;
++
++  return G_VFS_JOB (job);
++}
++
++static void
++run (GVfsJob *job)
++{
++  GVfsJobSetAttributesFromInfo *op_job = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO (job);
++  GVfsBackendClass *class = G_VFS_BACKEND_GET_CLASS (op_job->backend);
++
++  if (class->set_attributes_from_info == NULL)
++    {
++      /* TODO : try to fallback using class->set_attribute */
++      g_vfs_job_failed (job, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
++	               _("Operation not supported by backend"));
++      return;
++    }
++  class->set_attributes_from_info (op_job->backend, op_job, op_job->filename, op_job->info, op_job->flags);
++}
++
++static gboolean
++try (GVfsJob *job)
++{
++  GVfsJobSetAttributesFromInfo *op_job = G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO (job);
++  GVfsBackendClass *class = G_VFS_BACKEND_GET_CLASS (op_job->backend);
++
++  if (class->try_set_attributes_from_info == NULL)
++    {
++      /* TODO : try to fallback using class->try_set_attribute */
++      return;
++    }
++
++  return class->try_set_attributes_from_info (op_job->backend, op_job, op_job->filename, op_job->info, op_job->flags);
++}
++
++/* Might be called on an i/o thread */
++static DBusMessage *
++create_reply (GVfsJob *job,
++	      DBusConnection *connection,
++	      DBusMessage *message)
++{
++  DBusMessage *reply;
++
++  reply = dbus_message_new_method_return (message);
++  
++  return reply;
++}
+diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.h gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.h
+--- gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.h	1969-12-31 19:00:00.000000000 -0500
++++ gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.h	2008-04-10 15:38:11.794177930 -0400
+@@ -0,0 +1,72 @@
++/* GIO - GLib Input, Output and Streaming Library
++ * 
++ * Copyright (C) 2006-2007 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Author: Alexandre Rostovtsev <tetromino@gmail.com>
++ */
++
++#ifndef __G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_H__
++#define __G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_H__
++
++#include <gio/gio.h>
++#include <gvfsjob.h>
++#include <gvfsjobdbus.h>
++#include <gvfsbackend.h>
++
++G_BEGIN_DECLS
++
++#define G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO \
++	(g_vfs_job_set_attributes_from_info_get_type ())
++#define G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO(o) \
++	(G_TYPE_CHECK_INSTANCE_CAST ((o), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO, GVfsJobSetAttributesFromInfo))
++#define G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_CLASS(k) \
++	(G_TYPE_CHECK_CLASS_CAST((k), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO, GVfsJobSetAttributesFromInfoClass))
++#define G_VFS_IS_JOB_SET_ATTRIBUTES_FROM_INFO(o) \
++	(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO))
++#define G_VFS_IS_JOB_SET_ATTRIBUTES_FROM_INFO_CLASS(k) \
++	(G_TYPE_CHECK_CLASS_TYPE ((k), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO))
++#define G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_GET_CLASS(o) \
++	(G_TYPE_INSTANCE_GET_CLASS ((o), G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO, GVfsJobSetAttributesFromInfoClass))
++
++typedef struct _GVfsJobSetAttributesFromInfoClass   GVfsJobSetAttributesFromInfoClass;
++
++struct _GVfsJobSetAttributesFromInfo
++{
++  GVfsJobDBus parent_instance;
++
++  GVfsBackend *backend;
++
++  char *filename;
++  GFileInfo *info;
++  GFileQueryInfoFlags flags;
++};
++
++struct _GVfsJobSetAttributesFromInfoClass
++{
++  GVfsJobDBusClass parent_class;
++};
++
++GType g_vfs_job_set_attributes_from_info_get_type (void) G_GNUC_CONST;
++
++GVfsJob *g_vfs_job_set_attributes_from_info_new (DBusConnection *connection,
++					         DBusMessage    *message,
++					         GVfsBackend    *backend);
++
++G_END_DECLS
++
++#endif /* __G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_H__ */
+diff -ruN gvfs-0.2.3.orig/daemon/Makefile.am gvfs-0.2.3/daemon/Makefile.am
+--- gvfs-0.2.3.orig/daemon/Makefile.am	2008-04-07 22:13:04.000000000 -0400
++++ gvfs-0.2.3/daemon/Makefile.am	2008-04-11 02:53:39.168178426 -0400
+@@ -140,6 +140,7 @@
+ 	gvfsjobmakedirectory.c gvfsjobmakedirectory.h \
+ 	gvfsjobmakesymlink.c gvfsjobmakesymlink.h \
+ 	gvfsjobsetattribute.c gvfsjobsetattribute.h \
++	gvfsjobsetattributesfrominfo.c gvfsjobsetattributesfrominfo.h \
+ 	gvfsjobqueryattributes.c gvfsjobqueryattributes.h \
+ 	gvfsjobcreatemonitor.c gvfsjobcreatemonitor.h \
+ 	dbus-gmain.h dbus-gmain.c \
