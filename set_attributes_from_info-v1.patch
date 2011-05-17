@@ -56,7 +56,7 @@ diff -ruN gvfs-0.2.3.orig/client/gdaemonfile.c gvfs-0.2.3/client/gdaemonfile.c
 +				   NULL,
 +				   NULL, NULL, NULL,
 +				   cancellable, &my_error);
-+  dbus_message_unref (message);
++  //dbus_message_unref (message);
  
    if (reply == NULL)
      {
