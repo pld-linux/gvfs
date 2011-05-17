@@ -1,3 +1,5 @@
+https://bugzilla.gnome.org/show_bug.cgi?id=527339
+
 diff -ruN gvfs-0.2.3.orig/client/gdaemonfile.c gvfs-0.2.3/client/gdaemonfile.c
 --- gvfs-0.2.3.orig/client/gdaemonfile.c	2008-04-07 21:27:44.000000000 -0400
 +++ gvfs-0.2.3/client/gdaemonfile.c	2008-04-11 18:05:29.339838151 -0400
@@ -100,16 +102,15 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.c gvfs-0.2.3/daemon/gvfsbackend.c
  					G_VFS_DBUS_MOUNT_OP_QUERY_SETTABLE_ATTRIBUTES))
      job = g_vfs_job_query_attributes_new (connection, message, backend, FALSE);
    else if (dbus_message_is_method_call (message,
-diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.h gvfs-0.2.3/daemon/gvfsbackend.h
---- gvfs-0.2.3.orig/daemon/gvfsbackend.h	2008-04-07 21:27:43.000000000 -0400
-+++ gvfs-0.2.3/daemon/gvfsbackend.h	2008-04-11 10:55:39.961713887 -0400
-@@ -67,6 +67,7 @@
- typedef struct _GVfsJobUpload          GVfsJobUpload;
- typedef struct _GVfsJobMove            GVfsJobMove;
- typedef struct _GVfsJobSetAttribute    GVfsJobSetAttribute;
+--- gvfs-1.8.1/daemon/gvfsbackend.h~	2011-05-17 09:30:04.859567716 +0300
++++ gvfs-1.8.1/daemon/gvfsbackend.h	2011-05-17 09:30:36.264209158 +0300
+@@ -74,6 +74,7 @@
+ typedef struct _GVfsJobPush             GVfsJobPush;
+ typedef struct _GVfsJobPull             GVfsJobPull;
+ typedef struct _GVfsJobSetAttribute     GVfsJobSetAttribute;
 +typedef struct _GVfsJobSetAttributesFromInfo GVfsJobSetAttributesFromInfo;
- typedef struct _GVfsJobQueryAttributes GVfsJobQueryAttributes;
- typedef struct _GVfsJobCreateMonitor   GVfsJobCreateMonitor;
+ typedef struct _GVfsJobQueryAttributes  GVfsJobQueryAttributes;
+ typedef struct _GVfsJobCreateMonitor    GVfsJobCreateMonitor;
  
 @@ -339,6 +340,16 @@
  				 GFileAttributeType type,
@@ -225,7 +226,7 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
 +        {
 +          sftp_attributes |= SSH_FILEXFER_ATTR_ACMODTIME;
 +          /* assume year < 2107 */
-+          sftp_atime = 
++          sftp_atime = g_file_info_get_attribute_uint64 (info, attributes[i]); 
 +          is_atime_set = TRUE;
 +        }
 +      else if (!strcmp (attributes[i], G_FILE_ATTRIBUTE_TIME_CHANGED) )
@@ -328,8 +329,8 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemo
 +#include <glib.h>
 +#include <dbus/dbus.h>
 +#include <glib/gi18n.h>
++#include <gio/gio.h>
 +#include "gvfsjobmove.h"
-+#include "gdbusutils.h"
 +#include "gvfsdaemonprotocol.h"
 +#include "gvfsjobsetattribute.h"
 +#include "gvfsjobsetattributesfrominfo.h"
