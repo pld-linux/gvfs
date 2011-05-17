@@ -2,11 +2,12 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.8.1
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.8/%{name}-%{version}.tar.bz2
 # Source0-md5:	ef6ca22c01aaa8e985cfdd144c9afbb5
+Patch0:		set_attributes_from_info-v1.patch
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -16,7 +17,7 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.28.0
-BuildRequires:	gnome-disk-utility-devel >= 3.0.0
+BuildRequires:	gnome-disk-utility-devel >= 2.30.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
@@ -98,6 +99,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__intltoolize}
