@@ -1,28 +1,28 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.8.2
+Version:	1.10.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.8/%{name}-%{version}.tar.bz2
-# Source0-md5:	402f94b187b197b403d25c85caeb9562
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.10/%{name}-%{version}.tar.xz
+# Source0-md5:	b847eed5412c0ed8d0f7bcf6bb9e62c4
 Patch0:		set_attributes_from_info-v1.patch
-BuildRequires:	autoconf >= 2.50
-BuildRequires:	automake
+BuildRequires:	autoconf >= 2.64
+BuildRequires:	automake >= 1:1.11.1
 BuildRequires:	avahi-glib-devel >= 0.6.22
 BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
-BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.28.0
-BuildRequires:	gnome-disk-utility-devel >= 2.30.0
+BuildRequires:	glib2-devel >= 1:2.29.14
+BuildRequires:	gnome-disk-utility-devel >= 3.0.2
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel >= 2.8.0
+BuildRequires:	libgcrypt-devel >= 1.2.2
 BuildRequires:	libgnome-keyring-devel
 BuildRequires:	libgphoto2-devel >= 2.4.7
 BuildRequires:	libimobiledevice-devel >= 1.1.0
@@ -34,7 +34,9 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-glib-devel >= 138
+BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.26.0
 Requires:	%{name}-libs = %{version}-%{release}
 # for gvfs-gdu-volume-monitor:
@@ -64,7 +66,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.28.0
+Requires:	glib2 >= 1:2.29.14
 
 %description libs
 gvfs libraries.
@@ -77,7 +79,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.28.0
+Requires:	glib2-devel >= 1:2.29.14
 
 %description devel
 Header files for gvfs library.
@@ -119,7 +121,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.{cache,la}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.la
 
 %find_lang gvfs
 
@@ -151,6 +153,7 @@ exit 0
 %attr(755,root,root) %{_bindir}/gvfs-info
 %attr(755,root,root) %{_bindir}/gvfs-less
 %attr(755,root,root) %{_bindir}/gvfs-ls
+%attr(755,root,root) %{_bindir}/gvfs-mime
 %attr(755,root,root) %{_bindir}/gvfs-mkdir
 %attr(755,root,root) %{_bindir}/gvfs-monitor-dir
 %attr(755,root,root) %{_bindir}/gvfs-monitor-file
@@ -168,6 +171,8 @@ exit 0
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-afc
+%attr(755,root,root) %{_libexecdir}/gvfsd-afp
+%attr(755,root,root) %{_libexecdir}/gvfsd-afp-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-archive
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-cdda
@@ -198,6 +203,8 @@ exit 0
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
 %{_datadir}/gvfs/mounts/afc.mount
+%{_datadir}/gvfs/mounts/afp-browse.mount
+%{_datadir}/gvfs/mounts/afp.mount
 %{_datadir}/gvfs/mounts/archive.mount
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/cdda.mount
