@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.10.1
-Release:	2
+Version:	1.12.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.10/%{name}-%{version}.tar.xz
-# Source0-md5:	0c968704be003d2f6eab29388c41664e
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.12/%{name}-%{version}.tar.xz
+# Source0-md5:	0dd301b6d80b5ffa89e9a4a981abe297
 Patch0:		set_attributes_from_info-v1.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
@@ -15,11 +15,11 @@ BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
-BuildRequires:	glib2-devel >= 1:2.29.14
-BuildRequires:	gnome-disk-utility-devel >= 3.0.2
+BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
+BuildRequires:	libbluray-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
@@ -36,12 +36,13 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-glib-devel >= 138
+BuildRequires:	udisks2-devel >= 1.90.0
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.26.0
 Requires:	%{name}-libs = %{version}-%{release}
-# for gvfs-gdu-volume-monitor:
-Requires:	udisks
+Requires:	udisks2
 Suggests:	obex-data-server >= 0.4
+Suggests:	usbmuxd
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -66,7 +67,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.29.14
+Requires:	glib2 >= 1:2.32.0
 
 %description libs
 gvfs libraries.
@@ -79,7 +80,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.29.14
+Requires:	glib2-devel >= 1:2.32.0
 
 %description devel
 Header files for gvfs library.
@@ -111,6 +112,8 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %{__autoheader}
 %{__automake}
 %configure \
+	--disable-gdu \
+	--disable-hal \
 	--disable-silent-rules \
 	--with-bash-completion-dir=%{_sysconfdir}/bash_completion.d
 %{__make}
@@ -193,12 +196,12 @@ exit 0
 %attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-gdu-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
 %{_datadir}/dbus-1/services/org.gtk.Private.AfcVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
-%{_datadir}/dbus-1/services/org.gtk.Private.GduVolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
@@ -223,8 +226,8 @@ exit 0
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
-%{_datadir}/gvfs/remote-volume-monitors/gdu.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
 %{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
 %{_datadir}/GConf/gsettings/gvfs-smb.convert
 %{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
