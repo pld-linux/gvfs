@@ -1,0 +1,27 @@
+diff -uNr gvfs-1.12.0/daemon/gvfsbackendafc.c gvfs-1.12.0.new/daemon/gvfsbackendafc.c
+--- gvfs-1.12.0/daemon/gvfsbackendafc.c	2012-03-26 16:35:11.000000000 +0200
++++ gvfs-1.12.0.new/daemon/gvfsbackendafc.c	2012-03-31 10:03:27.141244477 +0200
+@@ -343,7 +343,7 @@
+   g_return_if_fail (afc_backend->uuid != NULL);
+   if (event->event != IDEVICE_DEVICE_REMOVE)
+     return;
+-  if (g_str_equal (event->uuid, afc_backend->uuid) == FALSE)
++  if (g_str_equal (event->udid, afc_backend->uuid) == FALSE)
+     return;
+ 
+   g_print ("Shutting down AFC backend for device uuid %s\n", afc_backend->uuid);
+diff -uNr gvfs-1.12.0/monitor/afc/afcvolumemonitor.c gvfs-1.12.0.new/monitor/afc/afcvolumemonitor.c
+--- gvfs-1.12.0/monitor/afc/afcvolumemonitor.c	2012-03-26 16:35:11.000000000 +0200
++++ gvfs-1.12.0.new/monitor/afc/afcvolumemonitor.c	2012-03-31 10:23:02.284878178 +0200
+@@ -89,9 +89,9 @@
+   self = G_VFS_AFC_VOLUME_MONITOR(user_data);
+ 
+   if (event->event == IDEVICE_DEVICE_ADD)
+-    g_vfs_afc_monitor_create_volume (self, event->uuid);
++    g_vfs_afc_monitor_create_volume (self, event->udid);
+   else
+-    g_vfs_afc_monitor_remove_volume (self, event->uuid);
++    g_vfs_afc_monitor_remove_volume (self, event->udid);
+ }
+ 
+ static GObject *
