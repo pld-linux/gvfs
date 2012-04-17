@@ -1,14 +1,13 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.12.0
-Release:	3
+Version:	1.12.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.12/%{name}-%{version}.tar.xz
-# Source0-md5:	0dd301b6d80b5ffa89e9a4a981abe297
+# Source0-md5:	8fddedf1e6bf66a8228d5476c8ec78ad
 Patch0:		set_attributes_from_info-v1.patch
-Patch1:		unstable-libimobiledevice-api.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -104,7 +103,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{__intltoolize}
