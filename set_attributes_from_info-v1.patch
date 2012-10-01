@@ -1,66 +1,59 @@
-https://bugzilla.gnome.org/show_bug.cgi?id=527339
-
-diff -ruN gvfs-0.2.3.orig/client/gdaemonfile.c gvfs-0.2.3/client/gdaemonfile.c
---- gvfs-0.2.3.orig/client/gdaemonfile.c	2008-04-07 21:27:44.000000000 -0400
-+++ gvfs-0.2.3/client/gdaemonfile.c	2008-04-11 18:05:29.339838151 -0400
-@@ -1891,6 +1891,56 @@
- 				   NULL,
- 				   NULL, NULL, NULL,
- 				   cancellable, &my_error);
-+  dbus_message_unref (message);
-+
-+  if (reply == NULL)
-+    {
-+      if (g_error_matches (my_error, G_VFS_ERROR, G_VFS_ERROR_RETRY))
-+	{
-+	  g_error_free (my_error);
-+	  goto retry;
-+	}
-+      g_propagate_error (error, my_error);
-+      return FALSE;
-+    }
-+
-+  dbus_message_unref (reply);
-+  return TRUE;
-+}
-+
+diff -urN gvfs-1.14.0.new/client/gdaemonfile.c gvfs-1.14.0/client/gdaemonfile.c
+--- gvfs-1.14.0.new/client/gdaemonfile.c	2012-09-30 22:04:15.383736541 +0200
++++ gvfs-1.14.0/client/gdaemonfile.c	2012-09-30 23:02:25.536442767 +0200
+@@ -2679,6 +2679,51 @@
+   return TRUE;
+ }
+ 
 +static gboolean
 +g_daemon_file_set_attributes_from_info (GFile *file,
-+			                GFileInfo *info,
-+			                GFileQueryInfoFlags flags,
-+			                GCancellable *cancellable,
-+			                GError **error)
++					GFileInfo *info,
++					GFileQueryInfoFlags flags,
++					GCancellable *cancellable,
++					GError **error)
 +{
-+  DBusMessage *message, *reply;
-+  DBusMessageIter iter;
-+  dbus_uint32_t flags_dbus;
++  GVfsDBusMount *proxy;
++  char *path;
++  gboolean res;
 +  GError *my_error;
 +
 + retry:
-+
-+  message = create_empty_message (file, G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO, NULL, error);
-+  if (!message)
++  proxy = create_proxy_for_file (file, NULL, &path, NULL, cancellable, error);
++  if (proxy == NULL)
 +    return FALSE;
 +
-+  dbus_message_iter_init_append (message, &iter);
-+
-+  flags_dbus = flags;
-+  dbus_message_iter_append_basic (&iter,
-+				  DBUS_TYPE_UINT32,
-+				  &flags_dbus);
-+
-+  _g_dbus_append_file_info (&iter, info);
-+
 +  my_error = NULL;
-+  reply = _g_vfs_daemon_call_sync (message,
-+				   NULL,
-+				   NULL, NULL, NULL,
-+				   cancellable, &my_error);
-+  //dbus_message_unref (message);
++  res = gvfs_dbus_mount_call_set_attributes_from_info_sync (proxy,
++                                        		    path,
++                                            		    flags,
++                                            		    _g_dbus_append_file_info (info),
++                                            		    cancellable,
++                                            		    &my_error);
++  g_free (path);
++
++  if (! res)
++    {
++      if (g_error_matches (my_error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
++        _g_dbus_send_cancelled_sync (g_dbus_proxy_get_connection (G_DBUS_PROXY (proxy)));
++      else
++      if (g_error_matches (my_error, G_VFS_ERROR, G_VFS_ERROR_RETRY))
++	{
++	  g_clear_error (&my_error);
++	  g_object_unref (proxy);
++	  goto retry;
++	}
++      _g_propagate_error_stripped (error, my_error);
++      return FALSE;
++    }
++
++  g_object_unref (proxy);
++
++  return TRUE;
++}
  
-   if (reply == NULL)
-     {
-@@ -2787,6 +2837,7 @@
+ typedef struct
+ {
+@@ -3698,6 +3743,7 @@
    iface->query_settable_attributes = g_daemon_file_query_settable_attributes;
    iface->query_writable_namespaces = g_daemon_file_query_writable_namespaces;
    iface->set_attribute = g_daemon_file_set_attribute;
@@ -68,51 +61,52 @@ diff -ruN gvfs-0.2.3.orig/client/gdaemonfile.c gvfs-0.2.3/client/gdaemonfile.c
    iface->make_symbolic_link = g_daemon_file_make_symbolic_link;
    iface->monitor_dir = g_daemon_file_monitor_dir;
    iface->monitor_file = g_daemon_file_monitor_file;
-diff -ruN gvfs-0.2.3.orig/common/gvfsdaemonprotocol.h gvfs-0.2.3/common/gvfsdaemonprotocol.h
---- gvfs-0.2.3.orig/common/gvfsdaemonprotocol.h	2008-04-07 21:27:43.000000000 -0400
-+++ gvfs-0.2.3/common/gvfsdaemonprotocol.h	2008-04-11 11:15:44.656713399 -0400
-@@ -45,6 +45,7 @@
- #define G_VFS_DBUS_MOUNT_OP_UPLOAD "Upload"
- #define G_VFS_DBUS_MOUNT_OP_MOVE "Move"
- #define G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTE "SetAttribute"
-+#define G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO "SetAttributesFromInfo"
- #define G_VFS_DBUS_MOUNT_OP_QUERY_SETTABLE_ATTRIBUTES "QuerySettableAttributes"
- #define G_VFS_DBUS_MOUNT_OP_QUERY_WRITABLE_NAMESPACES "QueryWritableNamespaces"
+diff -urN gvfs-1.14.0.new/common/org.gtk.vfs.xml gvfs-1.14.0/common/org.gtk.vfs.xml
+--- gvfs-1.14.0.new/common/org.gtk.vfs.xml	2012-09-30 22:04:15.377066577 +0200
++++ gvfs-1.14.0/common/org.gtk.vfs.xml	2012-09-30 22:56:26.665247761 +0200
+@@ -314,6 +314,11 @@
+       <arg type='u' name='flags' direction='in'/>
+       <arg type='(suv)' name='attribute' direction='in'/>
+     </method>
++    <method name="SetAttributesFromInfo">
++      <arg type='ay' name='path_data' direction='in'/>
++      <arg type='u' name='flags' direction='in'/>
++      <arg type='a(suv)' name='info' direction='in'/>
++    </method>
+     <method name="QuerySettableAttributes">
+       <arg type='ay' name='path_data' direction='in'/>
+       <arg type='a(suu)' name='list' direction='out'/>
+diff -urN gvfs-1.14.0.new/daemon/gvfsbackend.c gvfs-1.14.0/daemon/gvfsbackend.c
+--- gvfs-1.14.0.new/daemon/gvfsbackend.c	2012-09-30 22:04:15.393741487 +0200
++++ gvfs-1.14.0/daemon/gvfsbackend.c	2012-09-30 23:40:33.814046064 +0200
+@@ -55,6 +55,7 @@
+ #include <gvfsjobpush.h>
+ #include <gvfsjobpull.h>
+ #include <gvfsjobsetattribute.h>
++#include <gvfsjobsetattributesfrominfo.h>
+ #include <gvfsjobqueryattributes.h>
+ #include <gvfsdbus.h>
  
-@@ -154,6 +155,8 @@
-   gboolean boolean;
-   guint32 uint32;
-   guint64 uint64;
-+  gint32 int32;
-+  gint64 int64;
-   gpointer ptr;
- } GDbusAttributeValue;
- 
-diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.c gvfs-0.2.3/daemon/gvfsbackend.c
---- gvfs-0.2.3.orig/daemon/gvfsbackend.c	2008-04-07 21:27:43.000000000 -0400
-+++ gvfs-0.2.3/daemon/gvfsbackend.c	2008-04-11 16:50:26.962838580 -0400
-@@ -517,6 +517,10 @@
-     job = g_vfs_job_set_attribute_new (connection, message, backend);
-   else if (dbus_message_is_method_call (message,
- 					G_VFS_DBUS_MOUNT_INTERFACE,
-+					G_VFS_DBUS_MOUNT_OP_SET_ATTRIBUTES_FROM_INFO))
-+    job = g_vfs_job_set_attributes_from_info_new (connection, message, backend);
-+  else if (dbus_message_is_method_call (message,
-+					G_VFS_DBUS_MOUNT_INTERFACE,
- 					G_VFS_DBUS_MOUNT_OP_QUERY_SETTABLE_ATTRIBUTES))
-     job = g_vfs_job_query_attributes_new (connection, message, backend, FALSE);
-   else if (dbus_message_is_method_call (message,
---- gvfs-1.8.1/daemon/gvfsbackend.h~	2011-05-17 09:30:04.859567716 +0300
-+++ gvfs-1.8.1/daemon/gvfsbackend.h	2011-05-17 09:30:36.264209158 +0300
-@@ -74,6 +74,7 @@
+@@ -271,6 +272,7 @@
+   g_signal_connect (skeleton, "handle-query-settable-attributes", G_CALLBACK (g_vfs_job_query_settable_attributes_new_handle), data);
+   g_signal_connect (skeleton, "handle-query-writable-namespaces", G_CALLBACK (g_vfs_job_query_writable_namespaces_new_handle), data);
+   g_signal_connect (skeleton, "handle-set-attribute", G_CALLBACK (g_vfs_job_set_attribute_new_handle), data);
++  g_signal_connect (skeleton, "handle-set-attributes-from-info", G_CALLBACK (g_vfs_job_set_attributes_from_info_new_handle), data);
+   g_signal_connect (skeleton, "handle-poll-mountable", G_CALLBACK (g_vfs_job_poll_mountable_new_handle), data);
+   g_signal_connect (skeleton, "handle-start-mountable", G_CALLBACK (g_vfs_job_start_mountable_new_handle), data);
+   g_signal_connect (skeleton, "handle-stop-mountable", G_CALLBACK (g_vfs_job_stop_mountable_new_handle), data);
+diff -urN gvfs-1.14.0.new/daemon/gvfsbackend.h gvfs-1.14.0/daemon/gvfsbackend.h
+--- gvfs-1.14.0.new/daemon/gvfsbackend.h	2012-09-30 22:04:15.387071523 +0200
++++ gvfs-1.14.0/daemon/gvfsbackend.h	2012-09-30 23:08:49.801027687 +0200
+@@ -72,6 +72,7 @@
  typedef struct _GVfsJobPush             GVfsJobPush;
  typedef struct _GVfsJobPull             GVfsJobPull;
  typedef struct _GVfsJobSetAttribute     GVfsJobSetAttribute;
-+typedef struct _GVfsJobSetAttributesFromInfo GVfsJobSetAttributesFromInfo;
++typedef struct _GVfsJobSetAttributesFromInfo     GVfsJobSetAttributesFromInfo;
  typedef struct _GVfsJobQueryAttributes  GVfsJobQueryAttributes;
  typedef struct _GVfsJobCreateMonitor    GVfsJobCreateMonitor;
  
-@@ -339,6 +340,16 @@
+@@ -396,6 +397,17 @@
  				 GFileAttributeType type,
  				 gpointer value_p,
  				 GFileQueryInfoFlags flags);
@@ -126,13 +120,14 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackend.c gvfs-0.2.3/daemon/gvfsbackend.c
 +                                const char *filename,
 +                                GFileInfo *info,
 +                                GFileQueryInfoFlags flags);
++
    void     (*create_dir_monitor)(GVfsBackend *backend,
  				 GVfsJobCreateMonitor *job,
  				 const char *filename,
-diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackendsftp.c
---- gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c	2008-04-07 21:27:43.000000000 -0400
-+++ gvfs-0.2.3/daemon/gvfsbackendsftp.c	2008-04-11 18:04:54.013712956 -0400
-@@ -3801,9 +3801,38 @@
+diff -urN gvfs-1.14.0.new/daemon/gvfsbackendsftp.c gvfs-1.14.0/daemon/gvfsbackendsftp.c
+--- gvfs-1.14.0.new/daemon/gvfsbackendsftp.c	2012-09-30 22:04:15.390406505 +0200
++++ gvfs-1.14.0/daemon/gvfsbackendsftp.c	2012-09-30 23:48:52.948008785 +0200
+@@ -4575,9 +4575,38 @@
    g_file_attribute_info_list_add (list,
  				  G_FILE_ATTRIBUTE_UNIX_MODE,
  				  G_FILE_ATTRIBUTE_TYPE_UINT32,
@@ -172,7 +167,7 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
    g_vfs_job_query_attributes_set_list (job, list);
    g_vfs_job_succeeded (G_VFS_JOB (job));
    g_file_attribute_info_list_unref (list);
-@@ -3838,6 +3867,8 @@
+@@ -4612,6 +4641,8 @@
    GVfsBackendSftp *op_backend = G_VFS_BACKEND_SFTP (backend);
    GDataOutputStream *command;
  
@@ -181,7 +176,7 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
    if (strcmp (attribute, G_FILE_ATTRIBUTE_UNIX_MODE) != 0)
      {
        g_vfs_job_failed (G_VFS_JOB (job),
-@@ -3857,6 +3888,103 @@
+@@ -4640,6 +4671,103 @@
  }
  
  static void
@@ -272,7 +267,7 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
 +    {
 +      if (!i)
 +        /* no attributes to set - return success */
-+        g_vfs_job_succeeded (job);
++        g_vfs_job_succeeded (G_VFS_JOB (job));
 +      else
 +        g_vfs_job_failed (G_VFS_JOB (job),
 +                          G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
@@ -285,7 +280,7 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
  g_vfs_backend_sftp_class_init (GVfsBackendSftpClass *klass)
  {
    GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-@@ -3886,5 +4014,7 @@
+@@ -4672,5 +4800,7 @@
    backend_class->try_delete = try_delete;
    backend_class->try_set_display_name = try_set_display_name;
    backend_class->try_query_settable_attributes = try_query_settable_attributes;
@@ -293,10 +288,10 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsbackendsftp.c gvfs-0.2.3/daemon/gvfsbackend
    backend_class->try_set_attribute = try_set_attribute;
 +  backend_class->try_set_attributes_from_info = try_set_attributes_from_info;
  }
-diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.c
---- gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c	1969-12-31 19:00:00.000000000 -0500
-+++ gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.c	2008-04-11 11:07:34.213714426 -0400
-@@ -0,0 +1,220 @@
+diff -urN gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.c gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.c
+--- gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.c	1970-01-01 01:00:00.000000000 +0100
++++ gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.c	2012-09-30 23:32:41.529938013 +0200
+@@ -0,0 +1,190 @@
 +/* GVFS - GNOME virtual filesystem layer
 + *
 + * Copyright (C) 2008 Alexandre Rostovtsev
@@ -327,7 +322,6 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemo
 +#include <sys/un.h>
 +
 +#include <glib.h>
-+#include <dbus/dbus.h>
 +#include <glib/gi18n.h>
 +#include <gio/gio.h>
 +#include "gvfsjobmove.h"
@@ -347,9 +341,9 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemo
 +
 +static void         run          (GVfsJob        *job);
 +static gboolean     try          (GVfsJob        *job);
-+static DBusMessage *create_reply (GVfsJob        *job,
-+				  DBusConnection *connection,
-+				  DBusMessage    *message);
++static void         create_reply (GVfsJob               *job,
++                                  GVfsDBusMount         *object,
++                                  GDBusMethodInvocation *invocation);
 +
 +static void
 +g_vfs_job_set_attributes_from_info_dispose (GObject *object)
@@ -410,68 +404,43 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemo
 +  priv->dispose_has_run = FALSE;
 +}
 +
-+GVfsJob *
-+g_vfs_job_set_attributes_from_info_new (DBusConnection *connection,
-+				        DBusMessage *message,
-+				        GVfsBackend *backend)
++gboolean
++g_vfs_job_set_attributes_from_info_new_handle (GVfsDBusMount *object,
++					       GDBusMethodInvocation *invocation,
++					       const char *arg_path_data,
++					       guint arg_flags,
++					       GVariant *arg_info,
++					       GVfsBackend *backend)
 +{
 +  GVfsJobSetAttributesFromInfo *job;
-+  DBusMessage *reply;
-+  DBusMessageIter iter, array_iter;
-+  DBusError derror;
-+  const gchar *filename = NULL;
-+  gint filename_len;
-+  GFileQueryInfoFlags flags;
-+  gchar *attribute;
-+  dbus_uint32_t flags_u32 = 0;
-+  GFileAttributeType type;
-+  GDbusAttributeValue value;
 +  GFileInfo *info = NULL;
-+  int i = 0;
++  
++  if (g_vfs_backend_invocation_first_handler (object, invocation, backend))
++    return TRUE;
 +
-+  dbus_error_init (&derror);
-+
-+  dbus_message_iter_init (message, &iter);
-+
-+  if (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_ARRAY &&
-+      dbus_message_iter_get_element_type (&iter) == DBUS_TYPE_BYTE)
++  if ( !(info = _g_dbus_get_file_info (arg_info, NULL)) )
 +    {
-+      dbus_message_iter_recurse (&iter, &array_iter);
-+      dbus_message_iter_get_fixed_array (&array_iter, &filename, &filename_len);
-+    }
-+
-+  dbus_message_iter_next (&iter);
-+
-+  if (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_UINT32)
-+    {
-+      dbus_message_iter_get_basic (&iter, &flags_u32);
-+      dbus_message_iter_next (&iter);
-+    }
-+
-+  flags = flags_u32;
-+
-+  if (!filename || !(info = _g_dbus_get_file_info (&iter, NULL)))
-+    {
-+      reply = dbus_message_new_error (message,
-+                                      DBUS_ERROR_FAILED,
-+                                      _("Invalid dbus message"));
-+      dbus_error_free (&derror);
-+
-+      dbus_connection_send (connection, reply, NULL);
-+      return NULL;
++      g_dbus_method_invocation_return_error_literal (invocation,
++                                                     G_IO_ERROR,
++                                                     G_IO_ERROR_INVALID_ARGUMENT,
++                                                     _("Invalid dbus message"));
++      return TRUE;
 +    }
 +
 +  job = g_object_new (G_VFS_TYPE_JOB_SET_ATTRIBUTES_FROM_INFO,
-+		      "message", message,
-+		      "connection", connection,
-+		      NULL);
++                      "object", object,
++                      "invocation", invocation,
++                      NULL);
 +
 +  job->backend = backend;
-+  job->filename = g_strndup (filename, filename_len);
-+  job->flags = flags;
++  job->filename = g_strdup (arg_path_data);
 +  job->info = info;
++  job->flags = arg_flags;
 +
-+  return G_VFS_JOB (job);
++  g_vfs_job_source_new_job (G_VFS_JOB_SOURCE (backend), G_VFS_JOB (job));
++  g_object_unref (job);
++
++  return TRUE;
 +}
 +
 +static void
@@ -506,21 +475,17 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.c gvfs-0.2.3/daemo
 +}
 +
 +/* Might be called on an i/o thread */
-+static DBusMessage *
++static void
 +create_reply (GVfsJob *job,
-+	      DBusConnection *connection,
-+	      DBusMessage *message)
++	      GVfsDBusMount *object,
++	      GDBusMethodInvocation *invocation)
 +{
-+  DBusMessage *reply;
-+
-+  reply = dbus_message_new_method_return (message);
-+  
-+  return reply;
++    gvfs_dbus_mount_complete_set_attributes_from_info (object, invocation);
 +}
-diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.h gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.h
---- gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.h	1969-12-31 19:00:00.000000000 -0500
-+++ gvfs-0.2.3/daemon/gvfsjobsetattributesfrominfo.h	2008-04-10 15:38:11.794177930 -0400
-@@ -0,0 +1,72 @@
+diff -urN gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.h gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.h
+--- gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.h	1970-01-01 01:00:00.000000000 +0100
++++ gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.h	2012-09-30 23:42:51.086635731 +0200
+@@ -0,0 +1,75 @@
 +/* GIO - GLib Input, Output and Streaming Library
 + * 
 + * Copyright (C) 2006-2007 Red Hat, Inc.
@@ -586,21 +551,24 @@ diff -ruN gvfs-0.2.3.orig/daemon/gvfsjobsetattributesfrominfo.h gvfs-0.2.3/daemo
 +
 +GType g_vfs_job_set_attributes_from_info_get_type (void) G_GNUC_CONST;
 +
-+GVfsJob *g_vfs_job_set_attributes_from_info_new (DBusConnection *connection,
-+					         DBusMessage    *message,
-+					         GVfsBackend    *backend);
++gboolean g_vfs_job_set_attributes_from_info_new_handle (GVfsDBusMount         *object,
++                                                        GDBusMethodInvocation *invocation,
++                                                        const gchar           *arg_path_data,
++                                                        guint                  arg_flags,
++                                                        GVariant              *arg_info,
++                                                        GVfsBackend           *backend);
 +
 +G_END_DECLS
 +
 +#endif /* __G_VFS_JOB_SET_ATTRIBUTES_FROM_INFO_H__ */
-diff -ruN gvfs-0.2.3.orig/daemon/Makefile.am gvfs-0.2.3/daemon/Makefile.am
---- gvfs-0.2.3.orig/daemon/Makefile.am	2008-04-07 22:13:04.000000000 -0400
-+++ gvfs-0.2.3/daemon/Makefile.am	2008-04-11 02:53:39.168178426 -0400
-@@ -140,6 +140,7 @@
+diff -urN gvfs-1.14.0.new/daemon/Makefile.am gvfs-1.14.0/daemon/Makefile.am
+--- gvfs-1.14.0.new/daemon/Makefile.am	2012-09-30 22:04:15.400411451 +0200
++++ gvfs-1.14.0/daemon/Makefile.am	2012-09-30 23:39:57.067578418 +0200
+@@ -181,6 +181,7 @@
  	gvfsjobmakedirectory.c gvfsjobmakedirectory.h \
  	gvfsjobmakesymlink.c gvfsjobmakesymlink.h \
  	gvfsjobsetattribute.c gvfsjobsetattribute.h \
 +	gvfsjobsetattributesfrominfo.c gvfsjobsetattributesfrominfo.h \
  	gvfsjobqueryattributes.c gvfsjobqueryattributes.h \
  	gvfsjobcreatemonitor.c gvfsjobcreatemonitor.h \
- 	dbus-gmain.h dbus-gmain.c \
+ 	gvfskeyring.h gvfskeyring.c \
