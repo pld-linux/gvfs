@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.12.3
-Release:	2
+Version:	1.14.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.12/%{name}-%{version}.tar.xz
-# Source0-md5:	348edf09eca150ba7065017127f63c64
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.14/%{name}-%{version}.tar.xz
+# Source0-md5:	eaa0b567036be3c3c1de6a59f5af77d5
 Patch0:		set_attributes_from_info-v1.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
@@ -15,7 +15,8 @@ BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
-BuildRequires:	glib2-devel >= 1:2.32.0
+BuildRequires:	glib2-devel >= 1:2.34.0
+BuildRequires:	gtk+3-devel
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
@@ -23,10 +24,10 @@ BuildRequires:	libbluray-devel
 BuildRequires:	libcdio-devel >= 0.78.2
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
-BuildRequires:	libgnome-keyring-devel
 BuildRequires:	libgphoto2-devel >= 2.4.7
 BuildRequires:	libimobiledevice-devel >= 1.1.2
 BuildRequires:	libplist-devel >= 0.15
+BuildRequires:	libsecret-devel
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-gnome-devel >= 2.26.0
 BuildRequires:	libtool
@@ -34,13 +35,14 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
+BuildRequires:	systemd-devel >= 44
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-glib-devel >= 138
-BuildRequires:	udisks2-devel >= 1.90.0
+BuildRequires:	udisks2-devel >= 1.97.0
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.26.0
+Requires(post,postun):	glib2 >= 1:2.34.0
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	udisks2
+Requires:	udisks2 >= 1.97.0
 Suggests:	obex-data-server >= 0.4
 Suggests:	usbmuxd
 Obsoletes:	gnome-mount <= 0.8
@@ -67,7 +69,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.32.0
+Requires:	glib2 >= 1:2.34.0
 
 %description libs
 gvfs libraries.
@@ -80,7 +82,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.32.0
+Requires:	glib2-devel >= 1:2.34.0
 
 %description devel
 Header files for gvfs library.
@@ -183,18 +185,19 @@ exit 0
 %attr(755,root,root) %{_libexecdir}/gvfsd-dav
 %attr(755,root,root) %{_libexecdir}/gvfsd-dnssd
 %attr(755,root,root) %{_libexecdir}/gvfsd-ftp
+%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
 %attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-metadata
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
+%attr(755,root,root) %{_libexecdir}/gvfsd-recent
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
 %attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-fuse-daemon
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
@@ -221,6 +224,7 @@ exit 0
 %{_datadir}/gvfs/mounts/localtest.mount
 %{_datadir}/gvfs/mounts/network.mount
 %{_datadir}/gvfs/mounts/obexftp.mount
+%{_datadir}/gvfs/mounts/recent.mount
 %{_datadir}/gvfs/mounts/sftp.mount
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
@@ -233,22 +237,20 @@ exit 0
 %{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
+%{_mandir}/man1/*.1*
+%{_mandir}/man7/*.7*
 
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgvfscommon.so.0
-%attr(755,root,root) %{_libdir}/libgvfscommon-dnssd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgvfscommon-dnssd.so.0
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libgvfscommon.so
-%attr(755,root,root) %{_libdir}/libgvfscommon-dnssd.so
 %{_libdir}/libgvfscommon.la
-%{_libdir}/libgvfscommon-dnssd.la
 %{_includedir}/gvfs-client
 
 %files -n bash-completion-gvfs
 %defattr(644,root,root,755)
-%{_sysconfdir}/bash_completion.d/gvfs-bash-completion.sh
+%{_sysconfdir}/bash_completion.d/gvfs
