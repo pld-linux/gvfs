@@ -1,3 +1,5 @@
+https://bugzilla.gnome.org/show_bug.cgi?id=527339
+
 diff -urN gvfs-1.14.0.new/client/gdaemonfile.c gvfs-1.14.0/client/gdaemonfile.c
 --- gvfs-1.14.0.new/client/gdaemonfile.c	2012-09-30 22:04:15.383736541 +0200
 +++ gvfs-1.14.0/client/gdaemonfile.c	2012-09-30 23:02:25.536442767 +0200
