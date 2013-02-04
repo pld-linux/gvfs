@@ -8,6 +8,7 @@ Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.14/%{name}-%{version}.tar.xz
 # Source0-md5:	43e7af7132c2425289321c2156655d1f
 Patch0:		set_attributes_from_info-v1.patch
+Patch1:		libcdio-paranoia.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -106,6 +107,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__intltoolize}
