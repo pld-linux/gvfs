@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.14.2
+Version:	1.15.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.14/%{name}-%{version}.tar.xz
-# Source0-md5:	43e7af7132c2425289321c2156655d1f
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.15/%{name}-%{version}.tar.xz
+# Source0-md5:	c86807222be5b03c2d9ff42d9e5f33e7
 Patch0:		set_attributes_from_info-v1.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
