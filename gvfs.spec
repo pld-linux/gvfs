@@ -22,6 +22,7 @@ BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel
 BuildRequires:	libbluray-devel
 BuildRequires:	libcdio-devel >= 0.78.2
+BuildRequires:	libcdio-paranoia-devel
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
 BuildRequires:	libgphoto2-devel >= 2.4.7
