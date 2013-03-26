@@ -1,14 +1,13 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.14.2
-Release:	2
+Version:	1.16.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.14/%{name}-%{version}.tar.xz
-# Source0-md5:	43e7af7132c2425289321c2156655d1f
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.16/%{name}-%{version}.tar.xz
+# Source0-md5:	e712d12909d31ec7600f4e5c86d2b4b2
 Patch0:		set_attributes_from_info-v1.patch
-Patch1:		libcdio-paranoia.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
 BuildRequires:	avahi-glib-devel >= 0.6.22
@@ -16,7 +15,8 @@ BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
-BuildRequires:	glib2-devel >= 1:2.34.0
+BuildRequires:	glib2-devel >= 1:2.36.0
+BuildRequires:	gnome-online-accounts-devel >= 3.8.0
 BuildRequires:	gtk+3-devel
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
@@ -28,10 +28,11 @@ BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
 BuildRequires:	libgphoto2-devel >= 2.4.7
 BuildRequires:	libimobiledevice-devel >= 1.1.2
+BuildRequires:	libmtp-devel >= 1.1.5
 BuildRequires:	libplist-devel >= 0.15
 BuildRequires:	libsecret-devel
 BuildRequires:	libsmbclient-devel >= 3.0
-BuildRequires:	libsoup-gnome-devel >= 2.26.0
+BuildRequires:	libsoup-gnome-devel >= 2.34.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	openssl-devel
@@ -42,7 +43,7 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-glib-devel >= 138
 BuildRequires:	udisks2-devel >= 1.97.0
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.34.0
+Requires(post,postun):	glib2 >= 1:2.36.0
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	udisks2 >= 1.97.0
 Suggests:	obex-data-server >= 0.4
@@ -84,7 +85,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.34.0
+Requires:	glib2-devel >= 1:2.36.0
 
 %description devel
 Header files for gvfs library.
@@ -107,7 +108,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{__intltoolize}
@@ -193,6 +193,7 @@ exit 0
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-metadata
+%attr(755,root,root) %{_libexecdir}/gvfsd-mtp
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-recent
@@ -201,12 +202,16 @@ exit 0
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
 %attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfs-mtp-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
 %{_datadir}/dbus-1/services/org.gtk.Private.AfcVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
+%{_datadir}/dbus-1/services/org.gtk.Private.MTPVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
@@ -225,6 +230,7 @@ exit 0
 %{_datadir}/gvfs/mounts/gphoto2.mount
 %{_datadir}/gvfs/mounts/http.mount
 %{_datadir}/gvfs/mounts/localtest.mount
+%{_datadir}/gvfs/mounts/mtp.mount
 %{_datadir}/gvfs/mounts/network.mount
 %{_datadir}/gvfs/mounts/obexftp.mount
 %{_datadir}/gvfs/mounts/recent.mount
@@ -233,7 +239,9 @@ exit 0
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
+%{_datadir}/gvfs/remote-volume-monitors/goa.monitor
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
 %{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
 %{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
 %{_datadir}/GConf/gsettings/gvfs-smb.convert
@@ -242,6 +250,7 @@ exit 0
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
 %{_mandir}/man1/*.1*
 %{_mandir}/man7/*.7*
+%{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
 
 %files libs
 %defattr(644,root,root,755)
