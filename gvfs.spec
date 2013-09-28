@@ -1,12 +1,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.16.3
-Release:	3
+Version:	1.18.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.16/%{name}-%{version}.tar.xz
-# Source0-md5:	122f20b25a5e0259a3d33be25113a0aa
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.18/%{name}-%{version}.tar.xz
+# Source0-md5:	9319e74c892c26eaa3388327fcf0053c
 Patch0:		set_attributes_from_info-v1.patch
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
@@ -15,7 +15,7 @@ BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
 BuildRequires:	expat-devel
-BuildRequires:	glib2-devel >= 1:2.36.0
+BuildRequires:	glib2-devel >= 1:2.38.0
 BuildRequires:	gnome-online-accounts-devel >= 3.8.0
 BuildRequires:	gtk+3-devel
 BuildRequires:	gtk-doc >= 1.8
@@ -27,7 +27,7 @@ BuildRequires:	libcdio-paranoia-devel
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
 BuildRequires:	libgphoto2-devel >= 2.4.7
-BuildRequires:	libimobiledevice-devel >= 1.1.2
+BuildRequires:	libimobiledevice-devel >= 1.1.5
 BuildRequires:	libmtp-devel >= 1.1.5
 BuildRequires:	libplist-devel >= 0.15
 BuildRequires:	libsecret-devel
@@ -72,7 +72,7 @@ korzystających z gio.
 Summary:	gvfs libraries
 Summary(pl.UTF-8):	Biblioteki gvfs
 Group:		Libraries
-Requires:	glib2 >= 1:2.34.0
+Requires:	glib2 >= 1:2.38.0
 
 %description libs
 gvfs libraries.
@@ -85,7 +85,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.36.0
+Requires:	glib2-devel >= 1:2.38.0
 
 %description devel
 Header files for gvfs library.
