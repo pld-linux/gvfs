@@ -8,43 +8,56 @@ Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.18/%{name}-%{version}.tar.xz
 # Source0-md5:	9319e74c892c26eaa3388327fcf0053c
 Patch0:		set_attributes_from_info-v1.patch
+URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
 BuildRequires:	avahi-glib-devel >= 0.6.22
 BuildRequires:	bluez-libs-devel >= 4.0
 BuildRequires:	cdparanoia-III-devel >= 1:10
 BuildRequires:	dbus-glib-devel
-BuildRequires:	expat-devel
+BuildRequires:	expat-devel >= 1.95
 BuildRequires:	glib2-devel >= 1:2.38.0
 BuildRequires:	gnome-online-accounts-devel >= 3.8.0
-BuildRequires:	gtk+3-devel
+BuildRequires:	gtk+3-devel >= 3.0
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
-BuildRequires:	libarchive-devel
+BuildRequires:	libarchive-devel >= 3.0.22
 BuildRequires:	libbluray-devel
-BuildRequires:	libcdio-devel >= 0.78.2
-BuildRequires:	libcdio-paranoia-devel
+BuildRequires:	libcdio-paranoia-devel >= 0.78.2
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
-BuildRequires:	libgphoto2-devel >= 2.4.7
+BuildRequires:	libgphoto2-devel >= 2.5.0
 BuildRequires:	libimobiledevice-devel >= 1.1.5
-BuildRequires:	libmtp-devel >= 1.1.5
+BuildRequires:	libmtp-devel >= 1.1.6
 BuildRequires:	libplist-devel >= 0.15
 BuildRequires:	libsecret-devel
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-gnome-devel >= 2.34.0
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libxml2-devel >= 1:2.6.31
+BuildRequires:	libxslt-progs
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
 BuildRequires:	systemd-devel >= 44
 BuildRequires:	tar >= 1:1.22
-BuildRequires:	udev-glib-devel >= 138
+BuildRequires:	udev-devel >= 1:138
+BuildRequires:	udev-glib-devel >= 001
 BuildRequires:	udisks2-devel >= 1.97.0
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.36.0
+Requires(post,postun):	glib2 >= 1:2.38.0
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	avahi-glib >= 0.6.22
+Requires:	cdparanoia-III-libs >= 1:10
+Requires:	gnome-online-accounts-libs >= 3.8.0
+Requires:	libarchive >= 3.0.22
+Requires:	libcdio-paranoia >= 0.78.2
+Requires:	libimobiledevice >= 1.1.5
+Requires:	libmtp >= 1.1.6
+Requires:	libplist >= 0.15
+Requires:	libsoup-gnome >= 2.34.0
+Requires:	libxml2 >= 1:2.6.31
+Requires:	udev-libs >= 1:138
 Requires:	udisks2 >= 1.97.0
 Suggests:	obex-data-server >= 0.4
 Suggests:	usbmuxd
@@ -97,7 +110,8 @@ Pliki nagłówkowe biblioteki gvfs.
 Summary:	bash-completion for gvfs
 Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla gvfs
 Group:		Applications/Shells
-Requires:	bash-completion
+Requires:	%{name} = %{version}-%{release}
+Requires:	bash-completion >= 2
 
 %description -n bash-completion-gvfs
 This package provides bash-completion for gvfs.
@@ -119,8 +133,8 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %configure \
 	--disable-gdu \
 	--disable-hal \
-	--disable-silent-rules \
-	--with-bash-completion-dir=%{_sysconfdir}/bash_completion.d
+	--disable-silent-rules
+
 %{__make}
 
 %install
@@ -248,8 +262,11 @@ exit 0
 %{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
-%{_mandir}/man1/*.1*
-%{_mandir}/man7/*.7*
+%{_mandir}/man1/gvfs-*.1*
+%{_mandir}/man1/gvfsd.1*
+%{_mandir}/man1/gvfsd-fuse.1*
+%{_mandir}/man1/gvfsd-metadata.1*
+%{_mandir}/man7/gvfs.7*
 %{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
 
 %files libs
@@ -265,4 +282,4 @@ exit 0
 
 %files -n bash-completion-gvfs
 %defattr(644,root,root,755)
-%{_sysconfdir}/bash_completion.d/gvfs
+%{_datadir}/bash-completion/completions/gvfs
