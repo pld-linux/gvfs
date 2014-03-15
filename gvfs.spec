@@ -265,7 +265,7 @@ file services.
 	%{__enable_disable avahi} \
 	%{__enable_disable bluray} \
 	%{__enable_disable cdda} \
-	%{__enable_disable documentation doc} \
+	%{__enable_disable doc documentation} \
 	%{__enable_disable fuse} \
 	%{__enable_disable gdu} \
 	%{__enable_disable goa} \
@@ -274,7 +274,7 @@ file services.
 	%{__enable_disable gudev} \
 	%{__enable_disable http} \
 	%{__enable_disable keyring} \
-	%{__enable_disable mtp} \
+	%{__enable_disable mtp libmtp} \
 	%{__enable_disable obexftp} \
 	%{__enable_disable samba} \
 	%{__enable_disable systemd libsystemd-login} \
