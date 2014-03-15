@@ -1,3 +1,36 @@
+#
+# Conditional build:
+%bcond_without	doc		# do not build and package docs
+%bcond_without	http	# do not build http/dav backend
+%bcond_without	avahi	# do not build avahi support
+%bcond_without	udev	# build without libudev
+%bcond_without	fuse	# build without FUSE support
+%bcond_with		gdu		# build with GDU (Gnome Disk Utility) volume monitor
+%bcond_without	udisks2	# build without libudisks2
+%bcond_without	systemd	# build without liblibsystemd-login
+%bcond_without	gudev	# build without gudev support (use HAL)
+%bcond_without	cdda	# build without CDDA backend
+%bcond_without	afc		# build without AFC backend
+%bcond_without	goa		# build without GOA backend
+%bcond_without	obexftp	# build without ObexFTP backend
+%bcond_without	gphoto2	# build without gphoto2 support
+%bcond_with		keyring	# build without GNOME Keyring support
+%bcond_without	bluray	# build without bluray metadata support
+%bcond_without	mtp		# build without libmtp support
+%bcond_without	samba	# build without samba support
+%bcond_without	gtk		# build without GTK+
+%bcond_without	archive	# build without archive support
+%bcond_without	afp		# build without AFP support
+
+%if %{without gudev}
+%undefine	with_gphoto2
+%undefine	with_mtp
+%endif
+
+%ifarch s390 s390x
+%undefine	with_afc
+%endif
+
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
@@ -11,62 +44,65 @@ Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
-BuildRequires:	avahi-glib-devel >= 0.6.22
-BuildRequires:	bluez-libs-devel >= 4.0
-BuildRequires:	cdparanoia-III-devel >= 1:10
-BuildRequires:	dbus-glib-devel
-BuildRequires:	expat-devel >= 1.95
+%{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
+%{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
+%{?with_obexftp:BuildRequires:	bluez-libs-devel >= 4.0}
+%{?with_cdda:BuildRequires:	cdparanoia-III-devel >= 1:10}
+BuildRequires:	dbus-devel
+%{?with_obexftp:BuildRequires:	dbus-glib-devel}
+%{?with_obexftp:BuildRequires:	expat-devel >= 1.95}
 BuildRequires:	glib2-devel >= 1:2.38.0
-BuildRequires:	gnome-online-accounts-devel >= 3.8.0
-BuildRequires:	gtk+3-devel >= 3.0
+%{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
+%{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
+%{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 BuildRequires:	gtk-doc >= 1.8
 BuildRequires:	intltool >= 0.40.0
-BuildRequires:	libarchive-devel >= 3.0.22
-BuildRequires:	libbluray-devel
-BuildRequires:	libcdio-paranoia-devel >= 0.78.2
+%{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
+%{?with_bluray:BuildRequires:	libbluray-devel}
+%{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
 BuildRequires:	libexif-devel
-BuildRequires:	libfuse-devel >= 2.8.0
-BuildRequires:	libgcrypt-devel >= 1.2.2
-BuildRequires:	libgphoto2-devel >= 2.5.0
-BuildRequires:	libimobiledevice-devel >= 1.1.5
-BuildRequires:	libmtp-devel >= 1.1.6
-BuildRequires:	libplist-devel >= 0.15
+%{?with_fuse:BuildRequires:	libfuse-devel >= 2.8.0}
+%{?with_afp:BuildRequires:	libgcrypt-devel >= 1.2.2}
+%{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
+%{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.1.5}
+%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
+%{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 BuildRequires:	libsecret-devel
-BuildRequires:	libsmbclient-devel >= 3.0
-BuildRequires:	libsoup-gnome-devel >= 2.34.0
+%{?with_keyring:BuildRequires:	libsecret-devel}
+%{?with_samba:BuildRequires:	libsmbclient-devel >= 3.0}
+%{?with_http:BuildRequires:	libsoup-gnome-devel >= 2.34.0}
 BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel
-BuildRequires:	libxml2-devel >= 1:2.6.31
-BuildRequires:	libxslt-progs
+%{?with_http:BuildRequires:	libxml2-devel >= 1:2.6.31}
+%{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
-BuildRequires:	systemd-devel >= 44
+%{?with_systemd:BuildRequires:	systemd-devel >= 44}
 BuildRequires:	tar >= 1:1.22
-BuildRequires:	udev-devel >= 1:138
-BuildRequires:	udev-glib-devel >= 001
-BuildRequires:	udisks2-devel >= 1.97.0
+%{?with_udev:BuildRequires:	udev-devel >= 1:138}
+%{?with_gudev:BuildRequires:	udev-glib-devel >= 001}
+%{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.38.0
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	avahi-glib >= 0.6.22
-Requires:	cdparanoia-III-libs >= 1:10
-Requires:	libcdio-paranoia >= 0.78.2
-Requires:	libmtp >= 1.1.6
+%{?with_avahi:Requires:	avahi-glib >= 0.6.22}
+%{?with_cdda:Requires:	cdparanoia-III-libs >= 1:10}
+%{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 Requires:	libplist >= 0.15
 Requires:	libsoup-gnome >= 2.34.0
 Requires:	libxml2 >= 1:2.6.31
 Requires:	udev-libs >= 1:138
-Requires:	udisks2 >= 1.97.0
-Suggests:	%{name}-afc
-Suggests:	%{name}-afp
-Suggests:	%{name}-archive
-Suggests:	%{name}-fuse
-Suggests:	%{name}-goa
-Suggests:	%{name}-gphoto2
-Suggests:	%{name}-mtp
-Suggests:	%{name}-smb
-Suggests:	obex-data-server >= 0.4
+%{?with_udisks2:Requires:	udisks2 >= 1.97.0}
+%{?with_afc:Suggests:	%{name}-afc}
+%{?with_afp:Suggests:	%{name}-afp}
+%{?with_archive:Suggests:	%{name}-archive}
+%{?with_fuse:Suggests:	%{name}-fuse}
+%{?with_goa:Suggests:	%{name}-goa}
+%{?with_gphoto2:Suggests:	%{name}-gphoto2}
+%{?with_mtp:Suggests:	%{name}-mtp}
+%{?with_samba:Suggests:	%{name}-smb}
+%{?with_obexftp:Suggests:	obex-data-server >= 0.4}
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -192,6 +228,7 @@ applications using gvfs.
 Summary:	MTP support for gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	libmtp >= 1.1.6
 Conflicts:	%{name} < 1.18.3-5
 
 %description mtp
@@ -221,7 +258,28 @@ file services.
 %{__autoheader}
 %{__automake}
 %configure \
-	--disable-gdu \
+	SSH_PROGRAM=/usr/bin/ssh \
+	%{__enable_disable afc} \
+	%{__enable_disable afp} \
+	%{__enable_disable archive} \
+	%{__enable_disable avahi} \
+	%{__enable_disable bluray} \
+	%{__enable_disable cdda} \
+	%{__enable_disable documentation doc} \
+	%{__enable_disable fuse} \
+	%{__enable_disable gdu} \
+	%{__enable_disable goa} \
+	%{__enable_disable gphoto2} \
+	%{__enable_disable gtk} \
+	%{__enable_disable gudev} \
+	%{__enable_disable http} \
+	%{__enable_disable keyring} \
+	%{__enable_disable mtp} \
+	%{__enable_disable obexftp} \
+	%{__enable_disable samba} \
+	%{__enable_disable systemd libsystemd-login} \
+	%{__enable_disable udev} \
+	%{__enable_disable udisks2} \
 	--disable-hal \
 	--disable-silent-rules
 
@@ -229,7 +287,6 @@ file services.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -303,43 +360,43 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
-%attr(755,root,root) %{_libexecdir}/gvfsd-cdda
+%{?with_cdda:%attr(755,root,root) %{_libexecdir}/gvfsd-cdda}
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
-%attr(755,root,root) %{_libexecdir}/gvfsd-dav
-%attr(755,root,root) %{_libexecdir}/gvfsd-dnssd
+%{?with_http:%attr(755,root,root) %{_libexecdir}/gvfsd-dav}
+%{?with_avahi:%attr(755,root,root) %{_libexecdir}/gvfsd-dnssd}
 %attr(755,root,root) %{_libexecdir}/gvfsd-ftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-http
+%{?with_http:%attr(755,root,root) %{_libexecdir}/gvfsd-http}
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-metadata
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
-%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-recent
+%{?with_obexftp:%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp}
+%{?with_gtk:%attr(755,root,root) %{_libexecdir}/gvfsd-recent}
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
-%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
+%{?with_udisks2:%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor}
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
-%{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service
+%{?with_udisks2:%{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service}
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
 %{_datadir}/gvfs/mounts/burn.mount
-%{_datadir}/gvfs/mounts/cdda.mount
+%{?with_cdda:%{_datadir}/gvfs/mounts/cdda.mount}
 %{_datadir}/gvfs/mounts/computer.mount
-%{_datadir}/gvfs/mounts/dav.mount
-%{_datadir}/gvfs/mounts/dav+sd.mount
-%{_datadir}/gvfs/mounts/dns-sd.mount
+%{?with_http:%{_datadir}/gvfs/mounts/dav.mount}
+%{?with_http:%{_datadir}/gvfs/mounts/dav+sd.mount}
+%{?with_avahi:%{_datadir}/gvfs/mounts/dns-sd.mount}
 %{_datadir}/gvfs/mounts/ftp.mount
-%{_datadir}/gvfs/mounts/http.mount
+%{?with_http:%{_datadir}/gvfs/mounts/http.mount}
 %{_datadir}/gvfs/mounts/localtest.mount
 %{_datadir}/gvfs/mounts/network.mount
-%{_datadir}/gvfs/mounts/obexftp.mount
-%{_datadir}/gvfs/mounts/recent.mount
+%{?with_obexftp:%{_datadir}/gvfs/mounts/obexftp.mount}
+%{?with_gtk:%{_datadir}/gvfs/mounts/recent.mount}
 %{_datadir}/gvfs/mounts/sftp.mount
 %{_datadir}/gvfs/mounts/trash.mount
-%{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
-%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
-%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
+%{?with_udisks2:%{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor}
+%{?with_avahi:%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert}
+%{?with_avahi:%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml}
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
 %{_mandir}/man1/gvfs-*.1*
 %{_mandir}/man1/gvfsd.1*
@@ -361,12 +418,15 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %defattr(644,root,root,755)
 %{_datadir}/bash-completion/completions/gvfs
 
+%if %{with fuse}
 %files fuse
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfsd-fuse
 %{_mandir}/man1/gvfsd-fuse.1*
 %{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
+%endif
 
+%if %{with samba}
 %files smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfsd-smb
@@ -375,12 +435,16 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
 %{_datadir}/GConf/gsettings/gvfs-smb.convert
+%endif
 
+%if %{with archive}
 %files archive
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfsd-archive
 %{_datadir}/gvfs/mounts/archive.mount
+%endif
 
+%if %{with gphoto2}
 %files gphoto2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
@@ -388,8 +452,9 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
 %{_datadir}/gvfs/mounts/gphoto2.mount
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%endif
 
-%ifnarch s390 s390x
+%if %{with afc}
 %files afc
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
@@ -399,13 +464,16 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
 %endif
 
+%if %{with afp}
 %files afp
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfsd-afp
 %attr(755,root,root) %{_libexecdir}/gvfsd-afp-browse
 %{_datadir}/gvfs/mounts/afp-browse.mount
 %{_datadir}/gvfs/mounts/afp.mount
+%endif
 
+%if %{with mtp}
 %files mtp
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfs-mtp-volume-monitor
@@ -413,9 +481,12 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/dbus-1/services/org.gtk.Private.MTPVolumeMonitor.service
 %{_datadir}/gvfs/mounts/mtp.mount
 %{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
+%endif
 
+%if %{with goa}
 %files goa
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
 %{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
 %{_datadir}/gvfs/remote-volume-monitors/goa.monitor
+%endif
