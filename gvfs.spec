@@ -2,7 +2,7 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.18.3
-Release:	4
+Release:	5
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.18/%{name}-%{version}.tar.xz
@@ -24,6 +24,7 @@ BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libarchive-devel >= 3.0.22
 BuildRequires:	libbluray-devel
 BuildRequires:	libcdio-paranoia-devel >= 0.78.2
+BuildRequires:	libexif-devel
 BuildRequires:	libfuse-devel >= 2.8.0
 BuildRequires:	libgcrypt-devel >= 1.2.2
 BuildRequires:	libgphoto2-devel >= 2.5.0
@@ -34,6 +35,7 @@ BuildRequires:	libsecret-devel
 BuildRequires:	libsmbclient-devel >= 3.0
 BuildRequires:	libsoup-gnome-devel >= 2.34.0
 BuildRequires:	libtool >= 2:2.2
+BuildRequires:	libusb-devel
 BuildRequires:	libxml2-devel >= 1:2.6.31
 BuildRequires:	libxslt-progs
 BuildRequires:	openssl-devel
@@ -49,18 +51,22 @@ Requires(post,postun):	glib2 >= 1:2.38.0
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	avahi-glib >= 0.6.22
 Requires:	cdparanoia-III-libs >= 1:10
-Requires:	gnome-online-accounts-libs >= 3.8.0
-Requires:	libarchive >= 3.0.22
 Requires:	libcdio-paranoia >= 0.78.2
-Requires:	libimobiledevice >= 1.1.5
 Requires:	libmtp >= 1.1.6
 Requires:	libplist >= 0.15
 Requires:	libsoup-gnome >= 2.34.0
 Requires:	libxml2 >= 1:2.6.31
 Requires:	udev-libs >= 1:138
 Requires:	udisks2 >= 1.97.0
+Suggests:	%{name}-afc
+Suggests:	%{name}-afp
+Suggests:	%{name}-archive
+Suggests:	%{name}-fuse
+Suggests:	%{name}-goa
+Suggests:	%{name}-gphoto2
+Suggests:	%{name}-mtp
+Suggests:	%{name}-smb
 Suggests:	obex-data-server >= 0.4
-Suggests:	usbmuxd
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -69,9 +75,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 gvfs is a userspace virtual filesystem where mount runs as a separate
 processes which you talk to via D-BUS. It contains a gio module that
-seamlessly adds gvfs support to all applications using the gio API. It
-also supports exposing the gvfs mounts to non-gio applications using
-FUSE.
+seamlessly adds gvfs support to all applications using the gio API.
 
 %description -l pl.UTF-8
 gvfs to wirtualny system plik w przestrzeni użytkownika. Montowanie w
@@ -119,6 +123,92 @@ This package provides bash-completion for gvfs.
 %description -n bash-completion-gvfs -l pl.UTF-8
 Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
+%package fuse
+Summary:	FUSE support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	fuse
+Conflicts:	%{name} < 1.18.3-5
+
+%description fuse
+This package provides support for applications not using gio to access
+the gvfs filesystems.
+
+%package smb
+Summary:	Windows fileshare support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Conflicts:	%{name} < 1.18.3-5
+
+%description smb
+This package provides support for reading and writing files on windows
+shares (SMB) to applications using gvfs.
+
+%package archive
+Summary:	Archiving support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	libarchive >= 3.0.22
+
+%description archive
+This package provides support for accessing files inside Zip and Tar
+archives, as well as ISO images, to applications using gvfs.
+
+%package gphoto2
+Summary:	gphoto2 support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Conflicts:	%{name} < 1.18.3-5
+
+%description gphoto2
+This package provides support for reading and writing files on PTP
+based cameras (Picture Transfer Protocol) and MTP based media players
+(Media Transfer Protocol) to applications using gvfs.
+
+%package afc
+Summary:	AFC support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	libimobiledevice >= 1.1.5
+Requires:	usbmuxd
+Conflicts:	%{name} < 1.18.3-5
+
+%description afc
+This package provides support for reading files on mobile devices
+including phones and music players to applications using gvfs.
+
+%package afp
+Summary:	AFP support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Conflicts:	%{name} < 1.18.3-5
+
+%description afp
+This package provides support for reading and writing files on Mac OS
+X and original Mac OS network shares via Apple Filing Protocol to
+applications using gvfs.
+
+%package mtp
+Summary:	MTP support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Conflicts:	%{name} < 1.18.3-5
+
+%description mtp
+This package provides support for reading and writing files on MTP
+based devices (Media Transfer Protocol) to applications using gvfs.
+
+%package goa
+Summary:	GOA support for gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	gnome-online-accounts-libs >= 3.8.0
+Conflicts:	%{name} < 1.18.3-5
+
+%description goa
+This package provides seamless integration with gnome-online-accounts
+file services.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -154,7 +244,8 @@ rm -rf $RPM_BUILD_ROOT
 %glib_compile_schemas
 umask 022
 %{_bindir}/gio-querymodules %{_libdir}/gio/modules
-exit 0
+# Reload .mount files:
+killall -USR1 gvfsd >/dev/null 2>&1 || :
 
 %postun
 if [ "$1" = "0" ]; then
@@ -166,6 +257,25 @@ exit 0
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
+
+# Reload .mount files when single subpackage is installed:
+%post smb
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post gphoto2
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post mtp
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post goa
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post afc
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post archive
+killall -USR1 gvfsd >/dev/null 2>&1 || :
 
 %files -f gvfs.lang
 %defattr(644,root,root,755)
@@ -192,48 +302,27 @@ exit 0
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
-%attr(755,root,root) %{_libexecdir}/gvfsd-afc
-%attr(755,root,root) %{_libexecdir}/gvfsd-afp
-%attr(755,root,root) %{_libexecdir}/gvfsd-afp-browse
-%attr(755,root,root) %{_libexecdir}/gvfsd-archive
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-cdda
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
 %attr(755,root,root) %{_libexecdir}/gvfsd-dav
 %attr(755,root,root) %{_libexecdir}/gvfsd-dnssd
 %attr(755,root,root) %{_libexecdir}/gvfsd-ftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
-%attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
 %attr(755,root,root) %{_libexecdir}/gvfsd-http
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-metadata
-%attr(755,root,root) %{_libexecdir}/gvfsd-mtp
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-recent
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
-%attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfs-mtp-volume-monitor
 %attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
-%{_datadir}/dbus-1/services/org.gtk.Private.AfcVolumeMonitor.service
-%{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
-%{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
-%{_datadir}/dbus-1/services/org.gtk.Private.MTPVolumeMonitor.service
 %{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
-%{_datadir}/gvfs/mounts/afc.mount
-%{_datadir}/gvfs/mounts/afp-browse.mount
-%{_datadir}/gvfs/mounts/afp.mount
-%{_datadir}/gvfs/mounts/archive.mount
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/cdda.mount
 %{_datadir}/gvfs/mounts/computer.mount
@@ -241,33 +330,21 @@ exit 0
 %{_datadir}/gvfs/mounts/dav+sd.mount
 %{_datadir}/gvfs/mounts/dns-sd.mount
 %{_datadir}/gvfs/mounts/ftp.mount
-%{_datadir}/gvfs/mounts/gphoto2.mount
 %{_datadir}/gvfs/mounts/http.mount
 %{_datadir}/gvfs/mounts/localtest.mount
-%{_datadir}/gvfs/mounts/mtp.mount
 %{_datadir}/gvfs/mounts/network.mount
 %{_datadir}/gvfs/mounts/obexftp.mount
 %{_datadir}/gvfs/mounts/recent.mount
 %{_datadir}/gvfs/mounts/sftp.mount
-%{_datadir}/gvfs/mounts/smb-browse.mount
-%{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/gvfs/mounts/trash.mount
-%{_datadir}/gvfs/remote-volume-monitors/afc.monitor
-%{_datadir}/gvfs/remote-volume-monitors/goa.monitor
-%{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
-%{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
 %{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
 %{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
-%{_datadir}/GConf/gsettings/gvfs-smb.convert
 %{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
-%{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
 %{_mandir}/man1/gvfs-*.1*
 %{_mandir}/man1/gvfsd.1*
-%{_mandir}/man1/gvfsd-fuse.1*
 %{_mandir}/man1/gvfsd-metadata.1*
 %{_mandir}/man7/gvfs.7*
-%{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
 
 %files libs
 %defattr(644,root,root,755)
@@ -283,3 +360,62 @@ exit 0
 %files -n bash-completion-gvfs
 %defattr(644,root,root,755)
 %{_datadir}/bash-completion/completions/gvfs
+
+%files fuse
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
+%{_mandir}/man1/gvfsd-fuse.1*
+%{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
+
+%files smb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-smb
+%attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
+%{_datadir}/gvfs/mounts/smb-browse.mount
+%{_datadir}/gvfs/mounts/smb.mount
+%{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
+%{_datadir}/GConf/gsettings/gvfs-smb.convert
+
+%files archive
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-archive
+%{_datadir}/gvfs/mounts/archive.mount
+
+%files gphoto2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
+%{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/gvfs/mounts/gphoto2.mount
+%{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+
+%ifnarch s390 s390x
+%files afc
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfsd-afc
+%{_datadir}/dbus-1/services/org.gtk.Private.AfcVolumeMonitor.service
+%{_datadir}/gvfs/mounts/afc.mount
+%{_datadir}/gvfs/remote-volume-monitors/afc.monitor
+%endif
+
+%files afp
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-afp
+%attr(755,root,root) %{_libexecdir}/gvfsd-afp-browse
+%{_datadir}/gvfs/mounts/afp-browse.mount
+%{_datadir}/gvfs/mounts/afp.mount
+
+%files mtp
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-mtp-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfsd-mtp
+%{_datadir}/dbus-1/services/org.gtk.Private.MTPVolumeMonitor.service
+%{_datadir}/gvfs/mounts/mtp.mount
+%{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
+
+%files goa
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
+%{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
+%{_datadir}/gvfs/remote-volume-monitors/goa.monitor
