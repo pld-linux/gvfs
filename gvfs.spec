@@ -47,6 +47,7 @@ BuildRequires:	automake >= 1:1.11.1
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
 %{?with_obexftp:BuildRequires:	bluez-libs-devel >= 4.0}
+BuildRequires:	gettext-devel
 %{?with_cdda:BuildRequires:	cdparanoia-III-devel >= 1:10}
 BuildRequires:	dbus-devel
 %{?with_obexftp:BuildRequires:	dbus-glib-devel}
@@ -55,7 +56,7 @@ BuildRequires:	glib2-devel >= 1:2.38.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
-BuildRequires:	gtk-doc >= 1.8
+%{?with_doc:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	intltool >= 0.40.0
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
@@ -67,7 +68,6 @@ BuildRequires:	libexif-devel
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.1.5}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
-BuildRequires:	libsecret-devel
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.0}
 %{?with_http:BuildRequires:	libsoup-gnome-devel >= 2.34.0}
