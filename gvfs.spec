@@ -1,26 +1,26 @@
 #
 # Conditional build:
-%bcond_without	doc		# do not build and package docs
+%bcond_without	doc	# do not build and package docs
 %bcond_without	http	# do not build http/dav backend
 %bcond_without	avahi	# do not build avahi support
 %bcond_without	udev	# build without libudev
 %bcond_without	fuse	# build without FUSE support
-%bcond_with		gdu		# build with GDU (Gnome Disk Utility) volume monitor
+%bcond_with	gdu	# build with GDU (Gnome Disk Utility) volume monitor
 %bcond_without	udisks2	# build without libudisks2
 %bcond_without	systemd	# build without liblibsystemd-login
 %bcond_without	gudev	# build without gudev support (use HAL)
 %bcond_without	cdda	# build without CDDA backend
-%bcond_without	afc		# build without AFC backend
-%bcond_without	goa		# build without GOA backend
+%bcond_without	afc	# build without AFC backend
+%bcond_without	goa	# build without GOA backend
 %bcond_without	obexftp	# build without ObexFTP backend
 %bcond_without	gphoto2	# build without gphoto2 support
-%bcond_with		keyring	# build without GNOME Keyring support
+%bcond_with	keyring	# build without GNOME Keyring support
 %bcond_without	bluray	# build without bluray metadata support
-%bcond_without	mtp		# build without libmtp support
+%bcond_without	mtp	# build without libmtp support
 %bcond_without	samba	# build without samba support
-%bcond_without	gtk		# build without GTK+
+%bcond_without	gtk	# build without GTK+
 %bcond_without	archive	# build without archive support
-%bcond_without	afp		# build without AFP support
+%bcond_without	afp	# build without AFP support
 
 %if %{without gudev}
 %undefine	with_gphoto2
@@ -161,27 +161,36 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %package fuse
 Summary:	FUSE support for gvfs
+Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	fuse
-Conflicts:	%{name} < 1.18.3-5
+Requires:	libfuse
 
 %description fuse
 This package provides support for applications not using gio to access
 the gvfs filesystems.
 
+%description fuse -l pl.UTF-8
+Ten pakiet zapewnia obsługę aplikacji nie używających gio do dostępu
+do systemów plików gvfs.
+
 %package smb
 Summary:	Windows fileshare support for gvfs
+Summary(pl.UTF-8):	Obsługa udziałów sieciowych Windows dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Conflicts:	%{name} < 1.18.3-5
 
 %description smb
-This package provides support for reading and writing files on windows
+This package provides support for reading and writing files on Windows
 shares (SMB) to applications using gvfs.
+
+%description smb -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
+sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %package archive
 Summary:	Archiving support for gvfs
+Summary(pl.UTF-8):	Obsługa archiwów dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libarchive >= 3.0.22
@@ -190,61 +199,90 @@ Requires:	libarchive >= 3.0.22
 This package provides support for accessing files inside Zip and Tar
 archives, as well as ISO images, to applications using gvfs.
 
+%description archive -l pl.UTF-8
+Ten pakiet zapewnia dostęp do plików wewnątrz archiwów Zip i Tar oraz
+obrazów ISO dla aplikacji wykorzystujących gvfs.
+
 %package gphoto2
 Summary:	gphoto2 support for gvfs
+Summary(pl.UTF-8):	Obsługa gphoto2 dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Conflicts:	%{name} < 1.18.3-5
 
 %description gphoto2
 This package provides support for reading and writing files on PTP
 based cameras (Picture Transfer Protocol) and MTP based media players
 (Media Transfer Protocol) to applications using gvfs.
 
+%description gphoto2 -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na aparatach
+obsługujących protokół PTP (Picture Transfer Protocol) oraz
+odtwarzaczach multimedialnych obsługujących protokół MTP (Media
+Transfer Protocol) dla aplikacji wykorzystujących gvfs.
+
 %package afc
 Summary:	AFC support for gvfs
+Summary(pl.UTF-8):	Obsługa AFC dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libimobiledevice >= 1.1.5
 Requires:	usbmuxd
-Conflicts:	%{name} < 1.18.3-5
 
 %description afc
 This package provides support for reading files on mobile devices
 including phones and music players to applications using gvfs.
 
+%description afc -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu plików na urządzeniach
+przenośnych, w tym telefonach i odtwarzaczach muzyki dla aplikacji
+wykorzystujących gvfs.
+
 %package afp
 Summary:	AFP support for gvfs
+Summary(pl.UTF-8):	Obsługa AFP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Conflicts:	%{name} < 1.18.3-5
 
 %description afp
 This package provides support for reading and writing files on Mac OS
 X and original Mac OS network shares via Apple Filing Protocol to
 applications using gvfs.
 
+%description afp -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
+sieciowych Mac OS X oraz oryginalnego Mac OS poprzez Apple Filing
+Protocol dla aplikacji wykorzystujących gvfs.
+
 %package mtp
 Summary:	MTP support for gvfs
+Summary(pl.UTF-8):	Obsługa MTP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libmtp >= 1.1.6
-Conflicts:	%{name} < 1.18.3-5
 
 %description mtp
 This package provides support for reading and writing files on MTP
 based devices (Media Transfer Protocol) to applications using gvfs.
 
+%description mtp -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na urządzeniach
+obsługujących protokół MTP (Media Transfer Protocol) dla aplikacji
+wykorzystujących gvfs.
+
 %package goa
 Summary:	GOA support for gvfs
+Summary(pl.UTF-8):	Obsługa GOA dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gnome-online-accounts-libs >= 3.8.0
-Conflicts:	%{name} < 1.18.3-5
 
 %description goa
 This package provides seamless integration with gnome-online-accounts
 file services.
+
+%description goa -l pl.UTF-8
+Ten pakiet zapewnia przezroczystą integrację z usługami plikowymi
+gnome-online-accounts.
 
 %prep
 %setup -q
