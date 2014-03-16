@@ -116,9 +116,7 @@ seamlessly adds gvfs support to all applications using the gio API.
 gvfs to wirtualny system plik w przestrzeni użytkownika. Montowanie w
 nim działa jako oddzielny proces, z którym komunikacja odbywa się
 przez D-BUS. Zawiera moduł gio dodający w sposób przezroczysty obsługę
-gfvs-a do wszystkich aplikacji używających API gio. Obsługuje także
-montowania gvfs przy użyciu FUSE z myślą o aplikacjach nie
-korzystających z gio.
+gfvs-a do wszystkich aplikacji używających API gio.
 
 %package libs
 Summary:	gvfs libraries
