@@ -47,23 +47,23 @@ BuildRequires:	automake >= 1:1.11.1
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
 %{?with_obexftp:BuildRequires:	bluez-libs-devel >= 4.0}
-BuildRequires:	gettext-devel
 %{?with_cdda:BuildRequires:	cdparanoia-III-devel >= 1:10}
 BuildRequires:	dbus-devel
 %{?with_obexftp:BuildRequires:	dbus-glib-devel}
+%{?with_doc:BuildRequires:	docbook-dtd42-xml}
+%{?with_doc:BuildRequires:	docbook-style-xsl}
 %{?with_obexftp:BuildRequires:	expat-devel >= 1.95}
+BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.38.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
-%{?with_doc:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	intltool >= 0.40.0
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
-BuildRequires:	libexif-devel
 %{?with_fuse:BuildRequires:	libfuse-devel >= 2.8.0}
-%{?with_afp:BuildRequires:	libgcrypt-devel >= 1.2.2}
+BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.1.5}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
@@ -72,10 +72,8 @@ BuildRequires:	libexif-devel
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.0}
 %{?with_http:BuildRequires:	libsoup-gnome-devel >= 2.34.0}
 BuildRequires:	libtool >= 2:2.2
-BuildRequires:	libusb-devel
 %{?with_http:BuildRequires:	libxml2-devel >= 1:2.6.31}
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.592
 %{?with_systemd:BuildRequires:	systemd-devel >= 44}
@@ -436,10 +434,12 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{?with_avahi:%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert}
 %{?with_avahi:%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml}
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
+%if %{with doc}
 %{_mandir}/man1/gvfs-*.1*
 %{_mandir}/man1/gvfsd.1*
 %{_mandir}/man1/gvfsd-metadata.1*
 %{_mandir}/man7/gvfs.7*
+%endif
 
 %files libs
 %defattr(644,root,root,755)
@@ -460,7 +460,9 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %files fuse
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/gvfsd-fuse
+%if %{with doc}
 %{_mandir}/man1/gvfsd-fuse.1*
+%endif
 %{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
 %endif
 
