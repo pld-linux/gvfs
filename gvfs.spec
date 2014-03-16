@@ -25,6 +25,7 @@
 %if %{without gudev}
 %undefine	with_gphoto2
 %undefine	with_mtp
+%undefine	with_udisks2
 %endif
 
 %ifarch s390 s390x
@@ -420,7 +421,7 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{?with_cdda:%{_datadir}/gvfs/mounts/cdda.mount}
 %{_datadir}/gvfs/mounts/computer.mount
 %{?with_http:%{_datadir}/gvfs/mounts/dav.mount}
-%{?with_http:%{_datadir}/gvfs/mounts/dav+sd.mount}
+%{?with_http:%{?with_avahi:%{_datadir}/gvfs/mounts/dav+sd.mount}}
 %{?with_avahi:%{_datadir}/gvfs/mounts/dns-sd.mount}
 %{_datadir}/gvfs/mounts/ftp.mount
 %{?with_http:%{_datadir}/gvfs/mounts/http.mount}
@@ -463,7 +464,10 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %if %{with doc}
 %{_mandir}/man1/gvfsd-fuse.1*
 %endif
+%if %{with systemd}
+# FIXME: reusing USE_LIBSYSTEMD_LOGIN as systemd has no universal header or pkg-config file
 %{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
+%endif
 %endif
 
 %if %{with samba}
