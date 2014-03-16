@@ -367,7 +367,13 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 killall -USR1 gvfsd >/dev/null 2>&1 || :
 
 %post smb
+%glib_compile_schemas
 killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%postun smb
+if [ "$1" = "0" ]; then
+	%glib_compile_schemas
+fi
 
 %files -f gvfs.lang
 %defattr(644,root,root,755)
