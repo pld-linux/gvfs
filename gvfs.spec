@@ -395,44 +395,69 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %dir %{_libexecdir}
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
-%{?with_cdda:%attr(755,root,root) %{_libexecdir}/gvfsd-cdda}
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
-%{?with_http:%attr(755,root,root) %{_libexecdir}/gvfsd-dav}
-%{?with_avahi:%attr(755,root,root) %{_libexecdir}/gvfsd-dnssd}
 %attr(755,root,root) %{_libexecdir}/gvfsd-ftp
-%{?with_http:%attr(755,root,root) %{_libexecdir}/gvfsd-http}
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
 %attr(755,root,root) %{_libexecdir}/gvfsd-metadata
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
-%{?with_obexftp:%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp}
-%{?with_gtk:%attr(755,root,root) %{_libexecdir}/gvfsd-recent}
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
-%{?with_udisks2:%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor}
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
-%{?with_udisks2:%{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service}
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
 %{_datadir}/gvfs/mounts/burn.mount
-%{?with_cdda:%{_datadir}/gvfs/mounts/cdda.mount}
 %{_datadir}/gvfs/mounts/computer.mount
-%{?with_http:%{_datadir}/gvfs/mounts/dav.mount}
-%{?with_http:%{?with_avahi:%{_datadir}/gvfs/mounts/dav+sd.mount}}
-%{?with_avahi:%{_datadir}/gvfs/mounts/dns-sd.mount}
 %{_datadir}/gvfs/mounts/ftp.mount
-%{?with_http:%{_datadir}/gvfs/mounts/http.mount}
 %{_datadir}/gvfs/mounts/localtest.mount
 %{_datadir}/gvfs/mounts/network.mount
-%{?with_obexftp:%{_datadir}/gvfs/mounts/obexftp.mount}
-%{?with_gtk:%{_datadir}/gvfs/mounts/recent.mount}
 %{_datadir}/gvfs/mounts/sftp.mount
 %{_datadir}/gvfs/mounts/trash.mount
-%{?with_udisks2:%{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor}
-%{?with_avahi:%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert}
-%{?with_avahi:%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml}
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
+
+# cdda
+%if %{with cdda}
+%attr(755,root,root) %{_libexecdir}/gvfsd-cdda
+%{_datadir}/gvfs/mounts/cdda.mount
+%endif
+
+# http
+%if %{with http}
+%attr(755,root,root) %{_libexecdir}/gvfsd-dav
+%attr(755,root,root) %{_libexecdir}/gvfsd-http
+%{_datadir}/gvfs/mounts/http.mount
+%{_datadir}/gvfs/mounts/dav.mount
+%{?with_avahi:%{_datadir}/gvfs/mounts/dav+sd.mount}
+%endif
+
+# obexftp
+%if %{with obexftp}
+%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
+%{_datadir}/gvfs/mounts/obexftp.mount
+%endif
+
+# gtk
+%if %{with gtk}
+%attr(755,root,root) %{_libexecdir}/gvfsd-recent
+%{_datadir}/gvfs/mounts/recent.mount
+%endif
+
+# udisks2
+%if %{with udisks2}
+%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
+%{_datadir}/dbus-1/services/org.gtk.Private.UDisks2VolumeMonitor.service
+%{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
+%endif
+
+# avahi
+%if %{with avahi}
+%attr(755,root,root) %{_libexecdir}/gvfsd-dnssd
+%{_datadir}/gvfs/mounts/dns-sd.mount
+%{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
+%{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
+%endif
+
 %if %{with doc}
 %{_mandir}/man1/gvfs-*.1*
 %{_mandir}/man1/gvfsd.1*
