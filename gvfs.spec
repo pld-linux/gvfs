@@ -1,26 +1,26 @@
 #
 # Conditional build:
-%bcond_without	doc	# do not build and package docs
-%bcond_without	http	# do not build http/dav backend
-%bcond_without	avahi	# do not build avahi support
-%bcond_without	udev	# build without libudev
-%bcond_without	fuse	# build without FUSE support
-%bcond_with	gdu	# build with GDU (Gnome Disk Utility) volume monitor
-%bcond_without	udisks2	# build without libudisks2
-%bcond_without	systemd	# build without liblibsystemd-login
-%bcond_without	gudev	# build without gudev support (use HAL)
-%bcond_without	cdda	# build without CDDA backend
-%bcond_without	afc	# build without AFC backend
-%bcond_without	goa	# build without GOA backend
-%bcond_without	obexftp	# build without ObexFTP backend
-%bcond_without	gphoto2	# build without gphoto2 support
-%bcond_with	keyring	# build without GNOME Keyring support
-%bcond_without	bluray	# build without bluray metadata support
-%bcond_without	mtp	# build without libmtp support
-%bcond_without	samba	# build without samba support
-%bcond_without	gtk	# build without GTK+
-%bcond_without	archive	# build without archive support
-%bcond_without	afp	# build without AFP support
+%bcond_without	doc	# docs building and packaging
+%bcond_without	afc	# AFC backend
+%bcond_without	afp	# AFP support
+%bcond_without	archive	# archive support
+%bcond_without	avahi	# DNS-SD / Avahi support
+%bcond_without	bluray	# bluray metadata support
+%bcond_without	cdda	# CDDA backend
+%bcond_without	fuse	# FUSE support
+%bcond_without	goa	# GOA backend
+%bcond_with	gdu	# GDU (Gnome Disk Utility) volume monitor
+%bcond_without	gphoto2	# gphoto2 support
+%bcond_without	gtk	# GTK+
+%bcond_without	gudev	# gudev support (if disabled, HAL could be used)
+%bcond_without	http	# HTTP/DAV backend
+%bcond_with	keyring	# GNOME Keyring support
+%bcond_without	mtp	# MTP support
+%bcond_without	obexftp	# ObexFTP backend
+%bcond_without	samba	# SMB support
+%bcond_without	systemd	# libsystemd-login support
+%bcond_without	udev	# udev support (needed also for gphoto2 and mtp)
+%bcond_without	udisks2	# libudisks2 support
 
 %if %{without gudev}
 %undefine	with_gphoto2
@@ -146,80 +146,6 @@ Header files for gvfs library.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe biblioteki gvfs.
 
-%package -n bash-completion-gvfs
-Summary:	bash-completion for gvfs
-Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla gvfs
-Group:		Applications/Shells
-Requires:	%{name} = %{version}-%{release}
-Requires:	bash-completion >= 2
-
-%description -n bash-completion-gvfs
-This package provides bash-completion for gvfs.
-
-%description -n bash-completion-gvfs -l pl.UTF-8
-Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
-
-%package fuse
-Summary:	FUSE support for gvfs
-Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	libfuse
-
-%description fuse
-This package provides support for applications not using gio to access
-the gvfs filesystems.
-
-%description fuse -l pl.UTF-8
-Ten pakiet zapewnia obsługę aplikacji nie używających gio do dostępu
-do systemów plików gvfs.
-
-%package smb
-Summary:	Windows fileshare support for gvfs
-Summary(pl.UTF-8):	Obsługa udziałów sieciowych Windows dla gvfs
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description smb
-This package provides support for reading and writing files on Windows
-shares (SMB) to applications using gvfs.
-
-%description smb -l pl.UTF-8
-Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
-sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
-
-%package archive
-Summary:	Archiving support for gvfs
-Summary(pl.UTF-8):	Obsługa archiwów dla gvfs
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	libarchive >= 3.0.22
-
-%description archive
-This package provides support for accessing files inside Zip and Tar
-archives, as well as ISO images, to applications using gvfs.
-
-%description archive -l pl.UTF-8
-Ten pakiet zapewnia dostęp do plików wewnątrz archiwów Zip i Tar oraz
-obrazów ISO dla aplikacji wykorzystujących gvfs.
-
-%package gphoto2
-Summary:	gphoto2 support for gvfs
-Summary(pl.UTF-8):	Obsługa gphoto2 dla gvfs
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description gphoto2
-This package provides support for reading and writing files on PTP
-based cameras (Picture Transfer Protocol) and MTP based media players
-(Media Transfer Protocol) to applications using gvfs.
-
-%description gphoto2 -l pl.UTF-8
-Ten pakiet zapewnia obsługę odczytu i zapisu plików na aparatach
-obsługujących protokół PTP (Picture Transfer Protocol) oraz
-odtwarzaczach multimedialnych obsługujących protokół MTP (Media
-Transfer Protocol) dla aplikacji wykorzystujących gvfs.
-
 %package afc
 Summary:	AFC support for gvfs
 Summary(pl.UTF-8):	Obsługa AFC dla gvfs
@@ -253,6 +179,68 @@ Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
 sieciowych Mac OS X oraz oryginalnego Mac OS poprzez Apple Filing
 Protocol dla aplikacji wykorzystujących gvfs.
 
+%package archive
+Summary:	Archiving support for gvfs
+Summary(pl.UTF-8):	Obsługa archiwów dla gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	libarchive >= 3.0.22
+
+%description archive
+This package provides support for accessing files inside Zip and Tar
+archives, as well as ISO images, to applications using gvfs.
+
+%description archive -l pl.UTF-8
+Ten pakiet zapewnia dostęp do plików wewnątrz archiwów Zip i Tar oraz
+obrazów ISO dla aplikacji wykorzystujących gvfs.
+
+%package fuse
+Summary:	FUSE support for gvfs
+Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	libfuse
+
+%description fuse
+This package provides support for applications not using gio to access
+the gvfs filesystems.
+
+%description fuse -l pl.UTF-8
+Ten pakiet zapewnia obsługę aplikacji nie używających gio do dostępu
+do systemów plików gvfs.
+
+%package goa
+Summary:	GOA support for gvfs
+Summary(pl.UTF-8):	Obsługa GOA dla gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	gnome-online-accounts-libs >= 3.8.0
+
+%description goa
+This package provides seamless integration with gnome-online-accounts
+file services.
+
+%description goa -l pl.UTF-8
+Ten pakiet zapewnia przezroczystą integrację z usługami plikowymi
+gnome-online-accounts.
+
+%package gphoto2
+Summary:	gphoto2 support for gvfs
+Summary(pl.UTF-8):	Obsługa gphoto2 dla gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description gphoto2
+This package provides support for reading and writing files on PTP
+based cameras (Picture Transfer Protocol) and MTP based media players
+(Media Transfer Protocol) to applications using gvfs.
+
+%description gphoto2 -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na aparatach
+obsługujących protokół PTP (Picture Transfer Protocol) oraz
+odtwarzaczach multimedialnych obsługujących protokół MTP (Media
+Transfer Protocol) dla aplikacji wykorzystujących gvfs.
+
 %package mtp
 Summary:	MTP support for gvfs
 Summary(pl.UTF-8):	Obsługa MTP dla gvfs
@@ -269,20 +257,32 @@ Ten pakiet zapewnia obsługę odczytu i zapisu plików na urządzeniach
 obsługujących protokół MTP (Media Transfer Protocol) dla aplikacji
 wykorzystujących gvfs.
 
-%package goa
-Summary:	GOA support for gvfs
-Summary(pl.UTF-8):	Obsługa GOA dla gvfs
+%package smb
+Summary:	Windows fileshare support for gvfs
+Summary(pl.UTF-8):	Obsługa udziałów sieciowych Windows dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.8.0
 
-%description goa
-This package provides seamless integration with gnome-online-accounts
-file services.
+%description smb
+This package provides support for reading and writing files on Windows
+shares (SMB) to applications using gvfs.
 
-%description goa -l pl.UTF-8
-Ten pakiet zapewnia przezroczystą integrację z usługami plikowymi
-gnome-online-accounts.
+%description smb -l pl.UTF-8
+Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
+sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
+
+%package -n bash-completion-gvfs
+Summary:	bash-completion for gvfs
+Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla gvfs
+Group:		Applications/Shells
+Requires:	%{name} = %{version}-%{release}
+Requires:	bash-completion >= 2
+
+%description -n bash-completion-gvfs
+This package provides bash-completion for gvfs.
+
+%description -n bash-completion-gvfs -l pl.UTF-8
+Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 
 %prep
 %setup -q
@@ -354,7 +354,13 @@ exit 0
 %postun	libs -p /sbin/ldconfig
 
 # Reload .mount files when single subpackage is installed:
-%post smb
+%post afc
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post archive
+killall -USR1 gvfsd >/dev/null 2>&1 || :
+
+%post goa
 killall -USR1 gvfsd >/dev/null 2>&1 || :
 
 %post gphoto2
@@ -363,13 +369,7 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %post mtp
 killall -USR1 gvfsd >/dev/null 2>&1 || :
 
-%post goa
-killall -USR1 gvfsd >/dev/null 2>&1 || :
-
-%post afc
-killall -USR1 gvfsd >/dev/null 2>&1 || :
-
-%post archive
+%post smb
 killall -USR1 gvfsd >/dev/null 2>&1 || :
 
 %files -f gvfs.lang
@@ -452,46 +452,6 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_libdir}/libgvfscommon.la
 %{_includedir}/gvfs-client
 
-%files -n bash-completion-gvfs
-%defattr(644,root,root,755)
-%{_datadir}/bash-completion/completions/gvfs
-
-%if %{with fuse}
-%files fuse
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
-%{_mandir}/man1/gvfsd-fuse.1*
-%{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
-%endif
-
-%if %{with samba}
-%files smb
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
-%{_datadir}/gvfs/mounts/smb-browse.mount
-%{_datadir}/gvfs/mounts/smb.mount
-%{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
-%{_datadir}/GConf/gsettings/gvfs-smb.convert
-%endif
-
-%if %{with archive}
-%files archive
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-archive
-%{_datadir}/gvfs/mounts/archive.mount
-%endif
-
-%if %{with gphoto2}
-%files gphoto2
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
-%{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
-%{_datadir}/gvfs/mounts/gphoto2.mount
-%{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
-%endif
-
 %if %{with afc}
 %files afc
 %defattr(644,root,root,755)
@@ -511,6 +471,39 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/gvfs/mounts/afp.mount
 %endif
 
+%if %{with archive}
+%files archive
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-archive
+%{_datadir}/gvfs/mounts/archive.mount
+%endif
+
+%if %{with fuse}
+%files fuse
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
+%{_mandir}/man1/gvfsd-fuse.1*
+%{systemdtmpfilesdir}/gvfsd-fuse-tmpfiles.conf
+%endif
+
+%if %{with goa}
+%files goa
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
+%{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
+%{_datadir}/gvfs/remote-volume-monitors/goa.monitor
+%endif
+
+%if %{with gphoto2}
+%files gphoto2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
+%{_datadir}/dbus-1/services/org.gtk.Private.GPhoto2VolumeMonitor.service
+%{_datadir}/gvfs/mounts/gphoto2.mount
+%{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
+%endif
+
 %if %{with mtp}
 %files mtp
 %defattr(644,root,root,755)
@@ -521,10 +514,17 @@ killall -USR1 gvfsd >/dev/null 2>&1 || :
 %{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
 %endif
 
-%if %{with goa}
-%files goa
+%if %{with samba}
+%files smb
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
-%{_datadir}/dbus-1/services/org.gtk.Private.GoaVolumeMonitor.service
-%{_datadir}/gvfs/remote-volume-monitors/goa.monitor
+%attr(755,root,root) %{_libexecdir}/gvfsd-smb
+%attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
+%{_datadir}/gvfs/mounts/smb-browse.mount
+%{_datadir}/gvfs/mounts/smb.mount
+%{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
+%{_datadir}/GConf/gsettings/gvfs-smb.convert
 %endif
+
+%files -n bash-completion-gvfs
+%defattr(644,root,root,755)
+%{_datadir}/bash-completion/completions/gvfs
