@@ -289,7 +289,7 @@ diff -urN gvfs-1.14.0.new/daemon/gvfsbackendsftp.c gvfs-1.14.0/daemon/gvfsbacken
 +  backend_class->try_query_writable_namespaces = try_query_writable_namespaces;
    backend_class->try_set_attribute = try_set_attribute;
 +  backend_class->try_set_attributes_from_info = try_set_attributes_from_info;
- }
+   backend_class->try_push = try_push;
 diff -urN gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.c gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.c
 --- gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.c	1970-01-01 01:00:00.000000000 +0100
 +++ gvfs-1.14.0/daemon/gvfsjobsetattributesfrominfo.c	2012-09-30 23:32:41.529938013 +0200

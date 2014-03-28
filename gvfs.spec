@@ -35,12 +35,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.18.3
-Release:	5
+Version:	1.20.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.18/%{name}-%{version}.tar.xz
-# Source0-md5:	3620baa478f1748bd32d2f47bcbe30d0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.20/%{name}-%{version}.tar.xz
+# Source0-md5:	5c19d31f61af35ca7da3413a1db46bb0
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
@@ -71,7 +71,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.0}
-%{?with_http:BuildRequires:	libsoup-gnome-devel >= 2.34.0}
+%{?with_http:BuildRequires:	libsoup-devel >= 2.42.0}
 BuildRequires:	libtool >= 2:2.2
 %{?with_http:BuildRequires:	libxml2-devel >= 1:2.6.31}
 %{?with_doc:BuildRequires:	libxslt-progs}
@@ -84,7 +84,6 @@ BuildRequires:	tar >= 1:1.22
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.38.0
-Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	cdparanoia-III-libs >= 1:10}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
@@ -118,23 +117,10 @@ nim działa jako oddzielny proces, z którym komunikacja odbywa się
 przez D-BUS. Zawiera moduł gio dodający w sposób przezroczysty obsługę
 gfvs-a do wszystkich aplikacji używających API gio.
 
-%package libs
-Summary:	gvfs libraries
-Summary(pl.UTF-8):	Biblioteki gvfs
-Group:		Libraries
-Requires:	glib2 >= 1:2.38.0
-
-%description libs
-gvfs libraries.
-
-%description libs -l pl.UTF-8
-Biblioteki gvfs.
-
 %package devel
 Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.38.0
 
 %description devel
@@ -325,7 +311,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/gio/modules/*.la
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/{gio/modules,gvfs}/*.la
 
 %find_lang gvfs
 
@@ -346,9 +332,6 @@ fi
 umask 022
 %{_bindir}/gio-querymodules %{_libdir}/gio/modules
 exit 0
-
-%post	libs -p /sbin/ldconfig
-%postun	libs -p /sbin/ldconfig
 
 # Reload .mount files when single subpackage is installed:
 %post afc
@@ -408,6 +391,8 @@ fi
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
+%attr(755,root,root) %{_libexecdir}/libgvfscommon.so
+%attr(755,root,root) %{_libexecdir}/libgvfsdaemon.so
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
 %dir %{_datadir}/gvfs
@@ -471,15 +456,8 @@ fi
 %{_mandir}/man7/gvfs.7*
 %endif
 
-%files libs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libgvfscommon.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgvfscommon.so.0
-
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libgvfscommon.so
-%{_libdir}/libgvfscommon.la
 %{_includedir}/gvfs-client
 
 %if %{with afc}
