@@ -36,7 +36,7 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.20.0
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.20/%{name}-%{version}.tar.xz
@@ -102,6 +102,7 @@ Requires:	udev-libs >= 1:138
 %{?with_samba:Suggests:	%{name}-smb}
 %{?with_obexftp:Suggests:	obex-data-server >= 0.4}
 Obsoletes:	gnome-mount <= 0.8
+Obsoletes:	gvfs-libs < 1.20.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_libexecdir	%{_libdir}/%{name}
