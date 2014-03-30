@@ -9,12 +9,12 @@
 %bcond_without	cdda	# CDDA backend
 %bcond_without	fuse	# FUSE support
 %bcond_without	goa	# GOA backend
-%bcond_with	gdu	# GDU (Gnome Disk Utility) volume monitor
+%bcond_with	gdu	# GDU (Gnome Disk Utility) volume monitor (3.0.2 <= v < 3.4)
 %bcond_without	gphoto2	# gphoto2 support
 %bcond_without	gtk	# GTK+
 %bcond_without	gudev	# gudev support (if disabled, HAL could be used)
 %bcond_without	http	# HTTP/DAV backend
-%bcond_with	keyring	# GNOME Keyring support
+%bcond_without	keyring	# GNOME Keyring support in gvfs and udisks plugin
 %bcond_without	mtp	# MTP support
 %bcond_without	obexftp	# ObexFTP backend
 %bcond_without	samba	# SMB support
@@ -57,6 +57,7 @@ BuildRequires:	dbus-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.38.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
+%{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 BuildRequires:	intltool >= 0.40.0
@@ -88,7 +89,7 @@ Requires(post,postun):	glib2 >= 1:2.38.0
 %{?with_cdda:Requires:	cdparanoia-III-libs >= 1:10}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 Requires:	libplist >= 0.15
-Requires:	libsoup-gnome >= 2.34.0
+Requires:	libsoup >= 2.42.0
 Requires:	libxml2 >= 1:2.6.31
 Requires:	udev-libs >= 1:138
 %{?with_udisks2:Requires:	udisks2 >= 1.97.0}
