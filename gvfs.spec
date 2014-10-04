@@ -35,12 +35,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.20.3
+Version:	1.22.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.20/%{name}-%{version}.tar.xz
-# Source0-md5:	710f68730d6ad6708f0f1d47976bff58
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.22/%{name}-%{version}.tar.xz
+# Source0-md5:	065fc9a1e2169ec224fa2c752aeefa37
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
@@ -56,8 +56,8 @@ BuildRequires:	dbus-devel
 %{?with_obexftp:BuildRequires:	expat-devel >= 1.95}
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.38.0
-%{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
+%{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 BuildRequires:	intltool >= 0.40.0
@@ -81,7 +81,7 @@ BuildRequires:	rpmbuild(macros) >= 1.592
 %{?with_systemd:BuildRequires:	systemd-devel >= 44}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
-%{?with_gudev:BuildRequires:	udev-glib-devel >= 001}
+%{?with_gudev:BuildRequires:	udev-glib-devel >= 147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.38.0
@@ -542,4 +542,4 @@ fi
 
 %files -n bash-completion-gvfs
 %defattr(644,root,root,755)
-%{_datadir}/bash-completion/completions/gvfs
+%{bash_compdir}/gvfs
