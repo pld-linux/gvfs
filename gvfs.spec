@@ -71,7 +71,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
-%{?with_samba:BuildRequires:	libsmbclient-devel >= 3.0}
+%{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
 %{?with_http:BuildRequires:	libsoup-devel >= 2.42.0}
 BuildRequires:	libtool >= 2:2.2
 %{?with_http:BuildRequires:	libxml2-devel >= 1:2.6.31}
@@ -81,7 +81,7 @@ BuildRequires:	rpmbuild(macros) >= 1.592
 %{?with_systemd:BuildRequires:	systemd-devel >= 44}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
-%{?with_gudev:BuildRequires:	udev-glib-devel >= 147}
+%{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.38.0
@@ -91,7 +91,8 @@ Requires(post,postun):	glib2 >= 1:2.38.0
 Requires:	libplist >= 0.15
 Requires:	libsoup >= 2.42.0
 Requires:	libxml2 >= 1:2.6.31
-Requires:	udev-libs >= 1:138
+%{?with_gudev:Requires:	udev-glib >= 1:147}
+%{?with_udev:Requires:	udev-libs >= 1:138}
 %{?with_udisks2:Requires:	udisks2 >= 1.97.0}
 %{?with_afc:Suggests:	%{name}-afc}
 %{?with_afp:Suggests:	%{name}-afp}
