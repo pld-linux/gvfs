@@ -54,7 +54,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-dtd42-xml}
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 %{?with_obexftp:BuildRequires:	expat-devel >= 1.95}
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.38.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
