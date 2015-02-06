@@ -36,7 +36,7 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.22.3
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.22/%{name}-%{version}.tar.xz
@@ -85,6 +85,7 @@ BuildRequires:	tar >= 1:1.22
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.38.0
+Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	cdparanoia-III-libs >= 1:10}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
@@ -104,7 +105,6 @@ Requires:	libxml2 >= 1:2.6.31
 %{?with_samba:Suggests:	%{name}-smb}
 %{?with_obexftp:Suggests:	obex-data-server >= 0.4}
 Obsoletes:	gnome-mount <= 0.8
-Obsoletes:	gvfs-libs < 1.20.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_libexecdir	%{_libdir}/%{name}
@@ -120,10 +120,24 @@ nim działa jako oddzielny proces, z którym komunikacja odbywa się
 przez D-BUS. Zawiera moduł gio dodający w sposób przezroczysty obsługę
 gfvs-a do wszystkich aplikacji używających API gio.
 
+%package libs
+Summary:	Common GVFS shared libraries
+Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
+Group:		Libraries
+Requires:	glib2 >= 1:2.38.0
+Conflicts:	gvfs < 1.22.3-2
+
+%description libs
+Common GVFS (private) shared libraries.
+
+%description libs -l pl.UTF-8
+Wspólne (prywatne) biblioteki współdzielone GVFS.
+
 %package devel
 Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.38.0
 
 %description devel
@@ -384,7 +398,7 @@ fi
 %attr(755,root,root) %{_bindir}/gvfs-tree
 %attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
-%dir %{_libexecdir}
+#%dir %{_libexecdir}  # equal %{_libdir}/%{name}, packaged in -libs
 %attr(755,root,root) %{_libexecdir}/gvfsd
 %attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
@@ -394,8 +408,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
-%attr(755,root,root) %{_libexecdir}/libgvfscommon.so
-%attr(755,root,root) %{_libexecdir}/libgvfsdaemon.so
 %{_datadir}/dbus-1/services/gvfs-daemon.service
 %{_datadir}/dbus-1/services/gvfs-metadata.service
 %dir %{_datadir}/gvfs
@@ -458,6 +470,12 @@ fi
 %{_mandir}/man1/gvfsd-metadata.1*
 %{_mandir}/man7/gvfs.7*
 %endif
+
+%files libs
+%defattr(644,root,root,755)
+%dir %{_libdir}/%{name}
+%attr(755,root,root) %{_libdir}/%{name}/libgvfscommon.so
+%attr(755,root,root) %{_libdir}/%{name}/libgvfsdaemon.so
 
 %files devel
 %defattr(644,root,root,755)
