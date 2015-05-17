@@ -16,7 +16,7 @@
 %bcond_without	http	# HTTP/DAV backend
 %bcond_without	keyring	# GNOME Keyring support in gvfs and udisks plugin
 %bcond_without	mtp	# MTP support
-%bcond_without	obexftp	# ObexFTP backend
+%bcond_without	nfs	# NFS support
 %bcond_without	samba	# SMB support
 %bcond_without	systemd	# libsystemd-login support
 %bcond_without	udev	# udev support (needed also for gphoto2, mtp, udisks2)
@@ -35,27 +35,24 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.22.4
+Version:	1.24.1
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.22/%{name}-%{version}.tar.xz
-# Source0-md5:	3ab45e13cb7ff23931ec2d2820e2bca8
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.24/%{name}-%{version}.tar.xz
+# Source0-md5:	f536f7ae3bd6a86756f67b29d7c9d5e9
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11.1
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
-%{?with_obexftp:BuildRequires:	bluez-libs-devel >= 4.0}
 %{?with_cdda:BuildRequires:	cdparanoia-III-devel >= 1:10}
 BuildRequires:	dbus-devel
-%{?with_obexftp:BuildRequires:	dbus-glib-devel}
 %{?with_doc:BuildRequires:	docbook-dtd42-xml}
 %{?with_doc:BuildRequires:	docbook-style-xsl}
-%{?with_obexftp:BuildRequires:	expat-devel >= 1.95}
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.38.0
+BuildRequires:	glib2-devel >= 1:2.43.2
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
@@ -69,6 +66,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.1.5}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
+%{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.7}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
@@ -84,11 +82,12 @@ BuildRequires:	tar >= 1:1.22
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.38.0
+Requires(post,postun):	glib2 >= 1:2.43.2
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	cdparanoia-III-libs >= 1:10}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
+%{?with_nfs:Requires:	libnfs >= 1.9.7}
 Requires:	libplist >= 0.15
 Requires:	libsoup >= 2.42.0
 Requires:	libxml2 >= 1:2.6.31
@@ -103,7 +102,6 @@ Requires:	libxml2 >= 1:2.6.31
 %{?with_gphoto2:Suggests:	%{name}-gphoto2}
 %{?with_mtp:Suggests:	%{name}-mtp}
 %{?with_samba:Suggests:	%{name}-smb}
-%{?with_obexftp:Suggests:	obex-data-server >= 0.4}
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -124,7 +122,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.38.0
+Requires:	glib2 >= 1:2.43.2
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -138,7 +136,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.38.0
+Requires:	glib2-devel >= 1:2.43.2
 
 %description devel
 Header files for gvfs library.
@@ -313,7 +311,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 	%{__enable_disable http} \
 	%{__enable_disable keyring} \
 	%{__enable_disable mtp libmtp} \
-	%{__enable_disable obexftp} \
+	%{__enable_disable nfs} \
 	%{__enable_disable samba} \
 	%{__enable_disable systemd libsystemd-login} \
 	%{__enable_disable udev} \
@@ -439,16 +437,16 @@ fi
 %{?with_avahi:%{_datadir}/gvfs/mounts/dav+sd.mount}
 %endif
 
-# obexftp
-%if %{with obexftp}
-%attr(755,root,root) %{_libexecdir}/gvfsd-obexftp
-%{_datadir}/gvfs/mounts/obexftp.mount
-%endif
-
 # gtk
 %if %{with gtk}
 %attr(755,root,root) %{_libexecdir}/gvfsd-recent
 %{_datadir}/gvfs/mounts/recent.mount
+%endif
+
+# nfs
+%if %{with nfs}
+%attr(755,root,root) %{_libexecdir}/gvfsd-nfs
+%{_datadir}/gvfs/mounts/nfs.mount
 %endif
 
 # udisks2
