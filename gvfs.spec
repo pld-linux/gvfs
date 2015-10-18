@@ -355,12 +355,14 @@ install -d $RPM_BUILD_ROOT%{bash_compdir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+# Reload .mount files
+%define reload_mount_files killall -USR1 gvfsd >/dev/null 2>&1 || :;
+
 %post
 %glib_compile_schemas
 umask 022
 %{_bindir}/gio-querymodules %{_libdir}/gio/modules
-# Reload .mount files:
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %postun
 if [ "$1" = "0" ]; then
@@ -372,26 +374,26 @@ exit 0
 
 # Reload .mount files when single subpackage is installed:
 %post afc
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post archive
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post goa
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post google
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post gphoto2
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post mtp
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %post smb
 %glib_compile_schemas
-killall -USR1 gvfsd >/dev/null 2>&1 || :
+%reload_mount_files
 
 %postun smb
 if [ "$1" = "0" ]; then
