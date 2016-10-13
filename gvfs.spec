@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	doc	# docs building and packaging
+%bcond_without	admin	# admin backend
 %bcond_without	afc	# AFC backend
 %bcond_without	afp	# AFP support
 %bcond_without	archive	# archive support
@@ -36,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.26.3
-Release:	2
+Version:	1.30.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.26/%{name}-%{version}.tar.xz
-# Source0-md5:	cd002fd432782fefa508a8bcfd6b06d0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.30/%{name}-%{version}.tar.xz
+# Source0-md5:	81661951189035043ce9da6ff3a1a668
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
@@ -53,33 +54,34 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.46.0
+BuildRequires:	glib2-devel >= 1:2.50.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
 %{?with_google:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
-BuildRequires:	intltool >= 0.40.0
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
+%{?with_admin:BuildRequires:	libcap-devel}
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
 %{?with_fuse:BuildRequires:	libfuse-devel >= 2.8.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_google:BuildRequires:	libgdata-devel >= 0.17.3}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
-%{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.1.5}
-%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.6}
+%{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
+%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.12}
 %{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.7}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
 %{?with_http:BuildRequires:	libsoup-devel >= 2.42.0}
 BuildRequires:	libtool >= 2:2.2
-%{?with_http:BuildRequires:	libxml2-devel >= 1:2.6.31}
+BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	pkgconfig
+%{?with_admin:BuildRequires:	polkit-devel}
 BuildRequires:	rpmbuild(macros) >= 1.592
-%{?with_systemd:BuildRequires:	systemd-devel >= 44}
+%{?with_systemd:BuildRequires:	systemd-devel >= 206}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
@@ -125,7 +127,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.46.0
+Requires:	glib2 >= 1:2.50.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -139,7 +141,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.46.0
+Requires:	glib2-devel >= 1:2.50.0
 
 %description devel
 Header files for gvfs library.
@@ -152,7 +154,7 @@ Summary:	AFC support for gvfs
 Summary(pl.UTF-8):	Obsługa AFC dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libimobiledevice >= 1.1.5
+Requires:	libimobiledevice >= 1.2.0
 Requires:	usbmuxd
 
 %description afc
@@ -263,7 +265,7 @@ Summary:	MTP support for gvfs
 Summary(pl.UTF-8):	Obsługa MTP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libmtp >= 1.1.6
+Requires:	libmtp >= 1.1.12
 
 %description mtp
 This package provides support for reading and writing files on MTP
@@ -306,7 +308,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %patch0 -p1
 
 %build
-%{__intltoolize}
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
@@ -314,6 +315,7 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 %{__automake}
 %configure \
 	SSH_PROGRAM=/usr/bin/ssh \
+	%{__enable_disable admin} \
 	%{__enable_disable afc} \
 	%{__enable_disable afp} \
 	%{__enable_disable archive} \
@@ -402,7 +404,7 @@ fi
 
 %files -f gvfs.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README TODO
+%doc AUTHORS ChangeLog NEWS README
 %attr(755,root,root) %{_bindir}/gvfs-cat
 %attr(755,root,root) %{_bindir}/gvfs-copy
 %attr(755,root,root) %{_bindir}/gvfs-info
@@ -449,6 +451,14 @@ fi
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
 %{systemduserunitdir}/gvfs-daemon.service
 %{systemduserunitdir}/gvfs-metadata.service
+
+# admin
+%if %{with admin}
+%attr(755,root,root) %{_libexecdir}/gvfsd-admin
+%{_datadir}/gvfs/mounts/admin.mount
+%{_datadir}/polkit-1/actions/org.gtk.vfs.file-operations.policy
+%{_datadir}/polkit-1/rules.d/org.gtk.vfs.file-operations.rules
+%endif
 
 # cdda
 %if %{with cdda}
@@ -610,6 +620,7 @@ fi
 %{bash_compdir}/gvfs-monitor-dir
 %{bash_compdir}/gvfs-monitor-file
 %{bash_compdir}/gvfs-move
+%{bash_compdir}/gvfs-mount
 %{bash_compdir}/gvfs-open
 %{bash_compdir}/gvfs-rename
 %{bash_compdir}/gvfs-rm
