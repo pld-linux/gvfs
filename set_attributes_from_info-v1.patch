@@ -470,7 +470,7 @@ diff -urN gvfs-1.14.0.new/daemon/gvfsjobsetattributesfrominfo.c gvfs-1.14.0/daem
 +  if (class->try_set_attributes_from_info == NULL)
 +    {
 +      /* TODO : try to fallback using class->try_set_attribute */
-+      return;
++      return FALSE;
 +    }
 +
 +  return class->try_set_attributes_from_info (op_job->backend, op_job, op_job->filename, op_job->info, op_job->flags);
