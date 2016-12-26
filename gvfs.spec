@@ -53,7 +53,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-dtd42-xml}
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
-BuildRequires:	gettext-tools
+BuildRequires:	gettext-tools >= 0.19.4
 BuildRequires:	glib2-devel >= 1:2.50.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
@@ -87,7 +87,7 @@ BuildRequires:	tar >= 1:1.22
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.46.0
+Requires(post,postun):	glib2 >= 1:2.50.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
@@ -202,7 +202,7 @@ Summary:	FUSE support for gvfs
 Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libfuse
+Requires:	libfuse >= 2.8.0
 
 %description fuse
 This package provides support for applications not using gio to access
