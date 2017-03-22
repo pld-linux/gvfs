@@ -37,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.30.3
+Version:	1.32.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.30/%{name}-%{version}.tar.xz
-# Source0-md5:	2490ef552dd786cf6fd49eae4ebadaf0
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.32/%{name}-%{version}.tar.xz
+# Source0-md5:	a77c4378ca12bc819db2faea70a1c04b
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 BuildRequires:	autoconf >= 2.64
@@ -54,7 +54,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.50.0
+BuildRequires:	glib2-devel >= 1:2.52.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
@@ -76,6 +76,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
 %{?with_http:BuildRequires:	libsoup-devel >= 2.42.0}
 BuildRequires:	libtool >= 2:2.2
+BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	pkgconfig
@@ -87,13 +88,14 @@ BuildRequires:	tar >= 1:1.22
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.50.0
+Requires(post,postun):	glib2 >= 1:2.52.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 %{?with_nfs:Requires:	libnfs >= 1.9.7}
 Requires:	libplist >= 0.15
 Requires:	libsoup >= 2.42.0
+Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
 %{?with_gudev:Requires:	udev-glib >= 1:147}
 %{?with_udev:Requires:	udev-libs >= 1:138}
@@ -107,6 +109,7 @@ Requires:	libxml2 >= 1:2.6.31
 %{?with_gphoto2:Suggests:	%{name}-gphoto2}
 %{?with_mtp:Suggests:	%{name}-mtp}
 %{?with_samba:Suggests:	%{name}-smb}
+Obsoletes:	bash-completion-gvfs
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -127,7 +130,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.50.0
+Requires:	glib2 >= 1:2.52.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -141,7 +144,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.50.0
+Requires:	glib2-devel >= 1:2.52.0
 
 %description devel
 Header files for gvfs library.
@@ -290,19 +293,6 @@ shares (SMB) to applications using gvfs.
 Ten pakiet zapewnia obsługę odczytu i zapisu plików na udziałach
 sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
-%package -n bash-completion-gvfs
-Summary:	bash-completion for gvfs
-Summary(pl.UTF-8):	bashowe uzupełnianie nazw dla gvfs
-Group:		Applications/Shells
-Requires:	%{name} = %{version}-%{release}
-Requires:	bash-completion >= 2
-
-%description -n bash-completion-gvfs
-This package provides bash-completion for gvfs.
-
-%description -n bash-completion-gvfs -l pl.UTF-8
-Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
-
 %prep
 %setup -q
 %patch0 -p1
@@ -338,7 +328,6 @@ Pakiet ten dostarcza bashowe uzupełnianie nazw dla gvfs.
 	%{__enable_disable systemd libsystemd-login} \
 	%{__enable_disable udev} \
 	%{__enable_disable udisks2} \
-	--disable-hal \
 	--disable-silent-rules
 
 %{__make}
@@ -608,23 +597,3 @@ fi
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
 %{_datadir}/GConf/gsettings/gvfs-smb.convert
 %endif
-
-%files -n bash-completion-gvfs
-%defattr(644,root,root,755)
-%{bash_compdir}/gvfs-cat
-%{bash_compdir}/gvfs-copy
-%{bash_compdir}/gvfs-info
-%{bash_compdir}/gvfs-less
-%{bash_compdir}/gvfs-ls
-%{bash_compdir}/gvfs-mkdir
-%{bash_compdir}/gvfs-monitor-dir
-%{bash_compdir}/gvfs-monitor-file
-%{bash_compdir}/gvfs-move
-%{bash_compdir}/gvfs-mount
-%{bash_compdir}/gvfs-open
-%{bash_compdir}/gvfs-rename
-%{bash_compdir}/gvfs-rm
-%{bash_compdir}/gvfs-save
-%{bash_compdir}/gvfs-set-attribute
-%{bash_compdir}/gvfs-trash
-%{bash_compdir}/gvfs-tree
