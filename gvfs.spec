@@ -66,11 +66,11 @@ BuildRequires:	glib2-devel >= 1:2.52.0
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
 %{?with_fuse:BuildRequires:	libfuse-devel >= 2.8.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
-%{?with_google:BuildRequires:	libgdata-devel >= 0.17.3}
+%{?with_google:BuildRequires:	libgdata-devel >= 0.17.7}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.12}
-%{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.7}
+%{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.8}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
@@ -92,7 +92,7 @@ Requires(post,postun):	glib2 >= 1:2.52.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
-%{?with_nfs:Requires:	libnfs >= 1.9.7}
+%{?with_nfs:Requires:	libnfs >= 1.9.8}
 Requires:	libplist >= 0.15
 Requires:	libsoup >= 2.42.0
 Requires:	libusb >= 1.0.21
@@ -236,7 +236,7 @@ Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gnome-online-accounts-libs >= 3.18.0
-Requires:	libgdata >= 0.17.3
+Requires:	libgdata >= 0.17.7
 
 %description google
 This package provides support for Google Drive to applications using
