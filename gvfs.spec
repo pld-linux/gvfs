@@ -37,16 +37,14 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.34.2
-Release:	3
+Version:	1.38.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.34/%{name}-%{version}.tar.xz
-# Source0-md5:	0d1a761e150832f98287b2a41103e03d
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.38/%{name}-%{version}.tar.xz
+# Source0-md5:	510afd56f11579023d9a331f72fe5a8b
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
-BuildRequires:	autoconf >= 2.64
-BuildRequires:	automake >= 1:1.11.1
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
 BuildRequires:	dbus-devel
@@ -79,9 +77,11 @@ BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
+BuildRequires:	meson >= 0.46.0
+BuildRequires:	ninja
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel}
-BuildRequires:	rpmbuild(macros) >= 1.592
+BuildRequires:	rpmbuild(macros) >= 1.727
 %{?with_systemd:BuildRequires:	systemd-devel >= 206}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
@@ -295,51 +295,42 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %prep
 %setup -q
-%patch0 -p1
+#%%patch0 -p1
 
 %build
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	SSH_PROGRAM=/usr/bin/ssh \
-	%{__enable_disable admin} \
-	%{__enable_disable afc} \
-	%{__enable_disable afp} \
-	%{__enable_disable archive} \
-	%{__enable_disable avahi} \
-	%{__enable_disable bluray} \
-	%{__enable_disable cdda} \
-	%{__enable_disable doc documentation} \
-	%{__enable_disable fuse} \
-	%{__enable_disable gdu} \
-	%{__enable_disable goa} \
-	%{__enable_disable google} \
-	%{__enable_disable gphoto2} \
-	%{__enable_disable gtk} \
-	%{__enable_disable gudev} \
-	%{__enable_disable http} \
-	%{__enable_disable keyring} \
-	%{__enable_disable mtp libmtp} \
-	%{__enable_disable nfs} \
-	%{__enable_disable samba} \
-	%{__enable_disable systemd libsystemd-login} \
-	%{__enable_disable udev} \
-	%{__enable_disable udisks2} \
-	--disable-silent-rules
+%meson build \
+	-Dadmin=%{?with_admin:true}%{!?with_admin:false} \
+	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
+	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
+	-Darchive=%{?with_archive:true}%{!?with_archive:false} \
+	-Davahi=%{?with_avahi:true}%{!?with_avahi:false} \
+	-Dbluray=%{?with_bluray:true}%{!?with_bluray:false} \
+	-Dcdda=%{?with_cdda:true}%{!?with_cdda:false} \
+	-Ddocumentation=%{?with_doc:true}%{!?with_doc:false} \
+	-Dman=%{?with_doc:true}%{!?with_doc:false} \
+	-Dfuse=%{?with_fuse:true}%{!?with_fuse:false} \
+	-Dgdu=%{?with_gdu:true}%{!?with_gdu:false} \
+	-Dgoa=%{?with_goa:true}%{!?with_goa:false} \
+	-Dgoogle=%{?with_google:true}%{!?with_google:false} \
+	-Dgphoto2=%{?with_gphoto2:true}%{!?with_gphoto2:false} \
+	-Dgtk=%{?with_gtk:true}%{!?with_gtk:false} \
+	-Dgudev=%{?with_gudev:true}%{!?with_gudev:false} \
+	-Dhttp=%{?with_http:true}%{!?with_http:false} \
+	-Dkeyring=%{?with_keyring:true}%{!?with_keyring:false} \
+	-Dlibmtp=%{?with_mtp:true}%{!?with_mtp:false} \
+	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
+	-Dsamba=%{?with_samba:true}%{!?with_samba:false} \
+	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
+	-Dudev=%{?with_udev:true}%{!?with_udev:false} \
+	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
 
-%{__make}
+%meson_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT%{bash_compdir}
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/{gio/modules,gvfs}/*.la
+%meson_install -C build
 
 %find_lang gvfs
 
@@ -393,25 +384,7 @@ fi
 
 %files -f gvfs.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README
-%attr(755,root,root) %{_bindir}/gvfs-cat
-%attr(755,root,root) %{_bindir}/gvfs-copy
-%attr(755,root,root) %{_bindir}/gvfs-info
-%attr(755,root,root) %{_bindir}/gvfs-less
-%attr(755,root,root) %{_bindir}/gvfs-ls
-%attr(755,root,root) %{_bindir}/gvfs-mime
-%attr(755,root,root) %{_bindir}/gvfs-mkdir
-%attr(755,root,root) %{_bindir}/gvfs-monitor-dir
-%attr(755,root,root) %{_bindir}/gvfs-monitor-file
-%attr(755,root,root) %{_bindir}/gvfs-mount
-%attr(755,root,root) %{_bindir}/gvfs-move
-%attr(755,root,root) %{_bindir}/gvfs-open
-%attr(755,root,root) %{_bindir}/gvfs-rename
-%attr(755,root,root) %{_bindir}/gvfs-rm
-%attr(755,root,root) %{_bindir}/gvfs-save
-%attr(755,root,root) %{_bindir}/gvfs-set-attribute
-%attr(755,root,root) %{_bindir}/gvfs-trash
-%attr(755,root,root) %{_bindir}/gvfs-tree
+%doc CONTRIBUTING.md NEWS README.md
 %attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 #%dir %{_libexecdir}  # equal %{_libdir}/%{name}, packaged in -libs
@@ -493,7 +466,6 @@ fi
 %endif
 
 %if %{with doc}
-%{_mandir}/man1/gvfs-*.1*
 %{_mandir}/man1/gvfsd.1*
 %{_mandir}/man1/gvfsd-metadata.1*
 %{_mandir}/man7/gvfs.7*
@@ -516,6 +488,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/gvfsd-afc
 %{_datadir}/dbus-1/services/org.gtk.vfs.AfcVolumeMonitor.service
 %{_datadir}/gvfs/mounts/afc.mount
+%{_datadir}/gvfs/mounts/ftpis.mount
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
 %{systemduserunitdir}/gvfs-afc-volume-monitor.service
 %endif
