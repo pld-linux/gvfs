@@ -79,6 +79,7 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	meson >= 0.46.0
 BuildRequires:	ninja
+BuildRequires;	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel}
 BuildRequires:	rpmbuild(macros) >= 1.727
