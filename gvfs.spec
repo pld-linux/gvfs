@@ -37,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.38.2
+Version:	1.40.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.38/%{name}-%{version}.tar.xz
-# Source0-md5:	20e31b85a73c6a42aa8c2cabf3d6698b
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.40/%{name}-%{version}.tar.xz
+# Source0-md5:	96ef53ed613e4d223e0db3a7acea44f0
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
@@ -52,10 +52,10 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.52.0
+BuildRequires:	glib2-devel >= 1:2.58.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
-%{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.8.0}
+%{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 %{?with_google:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
@@ -72,16 +72,16 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
-%{?with_http:BuildRequires:	libsoup-devel >= 2.42.0}
+%{?with_http:BuildRequires:	libsoup-devel >= 2.58.0}
 BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.46.0
+BuildRequires:	meson >= 0.49.0
 BuildRequires:	ninja
 BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
-%{?with_admin:BuildRequires:	polkit-devel}
+%{?with_admin:BuildRequires:	polkit-devel >= 0.114}
 BuildRequires:	rpmbuild(macros) >= 1.727
 %{?with_systemd:BuildRequires:	systemd-devel >= 206}
 BuildRequires:	tar >= 1:1.22
@@ -89,15 +89,16 @@ BuildRequires:	tar >= 1:1.22
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.52.0
+Requires(post,postun):	glib2 >= 1:2.58.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 %{?with_nfs:Requires:	libnfs >= 1.9.8}
 Requires:	libplist >= 0.15
-Requires:	libsoup >= 2.42.0
+Requires:	libsoup >= 2.58.0
 Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
+Requires:	polkit-libs >= 0.114
 %{?with_gudev:Requires:	udev-glib >= 1:147}
 %{?with_udev:Requires:	udev-libs >= 1:138}
 %{?with_udisks2:Requires:	udisks2 >= 1.97.0}
@@ -131,7 +132,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.52.0
+Requires:	glib2 >= 1:2.58.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -145,7 +146,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.52.0
+Requires:	glib2-devel >= 1:2.58.0
 
 %description devel
 Header files for gvfs library.
@@ -221,7 +222,7 @@ Summary:	GOA support for gvfs
 Summary(pl.UTF-8):	Obsługa GOA dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.8.0
+Requires:	gnome-online-accounts-libs >= 3.18.0
 
 %description goa
 This package provides seamless integration with gnome-online-accounts
