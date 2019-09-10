@@ -37,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.40.2
+Version:	1.42.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.40/%{name}-%{version}.tar.xz
-# Source0-md5:	47db9bec616e089513b7f1386e5c7d5f
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.42/%{name}-%{version}.tar.xz
+# Source0-md5:	61377a86babe41cdf6c5dfd1fef53b21
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
@@ -57,17 +57,18 @@ BuildRequires:	glib2-devel >= 1:2.58.0
 %{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 %{?with_google:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
+BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
 %{?with_admin:BuildRequires:	libcap-devel}
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
-%{?with_fuse:BuildRequires:	libfuse-devel >= 2.8.0}
+%{?with_fuse:BuildRequires:	libfuse3-devel}
 BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_google:BuildRequires:	libgdata-devel >= 0.17.7}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
-%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.12}
+%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.15}
 %{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.8}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
@@ -77,8 +78,8 @@ BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.49.0
-BuildRequires:	ninja
+BuildRequires:	meson >= 0.50.0
+BuildRequires:	ninja >= 1.5
 BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel >= 0.114}
@@ -92,6 +93,7 @@ BuildRequires:	xz
 Requires(post,postun):	glib2 >= 1:2.58.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
+Requires:	gsettings-desktop-schemas >= 3.33.0
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 %{?with_nfs:Requires:	libnfs >= 1.9.8}
 Requires:	libplist >= 0.15
@@ -207,7 +209,7 @@ Summary:	FUSE support for gvfs
 Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libfuse >= 2.8.0
+Requires:	libfuse3
 
 %description fuse
 This package provides support for applications not using gio to access
@@ -270,7 +272,7 @@ Summary:	MTP support for gvfs
 Summary(pl.UTF-8):	Obsługa MTP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libmtp >= 1.1.12
+Requires:	libmtp >= 1.1.15
 
 %description mtp
 This package provides support for reading and writing files on MTP
