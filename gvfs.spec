@@ -9,12 +9,11 @@
 %bcond_without	bluray	# bluray metadata support
 %bcond_without	cdda	# CDDA backend
 %bcond_without	fuse	# FUSE support
-%bcond_without	goa	# GOA backend
+%bcond_without	goa	# GOA backend (needed also for google)
 %bcond_without	google	# Google backend
-%bcond_with	gdu	# GDU (Gnome Disk Utility) volume monitor (3.0.2 <= v < 3.4)
 %bcond_without	gphoto2	# gphoto2 support
 %bcond_without	gtk	# GTK+
-%bcond_without	gudev	# gudev support (if disabled, HAL could be used)
+%bcond_without	gudev	# gudev support (needed for gphoto2, mtp, udisks2)
 %bcond_without	http	# HTTP/DAV backend
 %bcond_without	keyring	# GNOME Keyring support in gvfs and udisks plugin
 %bcond_without	mtp	# MTP support
@@ -28,6 +27,9 @@
 %undefine	with_gphoto2
 %undefine	with_mtp
 %undefine	with_udisks2
+%endif
+%if %{without goa}
+%undefine	with_google
 %endif
 
 %ifarch s390 s390x
@@ -53,19 +55,16 @@ BuildRequires:	dbus-devel
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools >= 0.19.4
 BuildRequires:	glib2-devel >= 1:2.58.0
-%{?with_gdu:BuildRequires:	gnome-disk-utility-devel < 3.4}
-%{?with_gdu:BuildRequires:	gnome-disk-utility-devel >= 3.0.2}
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
-%{?with_google:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
 %{?with_admin:BuildRequires:	libcap-devel}
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
-%{?with_fuse:BuildRequires:	libfuse3-devel}
+%{?with_fuse:BuildRequires:	libfuse3-devel >= 3.0.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
-%{?with_google:BuildRequires:	libgdata-devel >= 0.17.7}
+%{?with_google:BuildRequires:	libgdata-devel >= 0.17.9}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.15}
@@ -84,7 +83,7 @@ BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel >= 0.114}
 BuildRequires:	rpmbuild(macros) >= 1.727
-%{?with_systemd:BuildRequires:	systemd-devel >= 206}
+%{?with_systemd:BuildRequires:	systemd-devel >= 1:206}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
@@ -240,7 +239,7 @@ Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gnome-online-accounts-libs >= 3.18.0
-Requires:	libgdata >= 0.17.7
+Requires:	libgdata >= 0.17.9
 
 %description google
 This package provides support for Google Drive to applications using
@@ -311,9 +310,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dbluray=%{?with_bluray:true}%{!?with_bluray:false} \
 	-Dcdda=%{?with_cdda:true}%{!?with_cdda:false} \
 	-Ddocumentation=%{?with_doc:true}%{!?with_doc:false} \
-	-Dman=%{?with_doc:true}%{!?with_doc:false} \
 	-Dfuse=%{?with_fuse:true}%{!?with_fuse:false} \
-	-Dgdu=%{?with_gdu:true}%{!?with_gdu:false} \
 	-Dgoa=%{?with_goa:true}%{!?with_goa:false} \
 	-Dgoogle=%{?with_google:true}%{!?with_google:false} \
 	-Dgphoto2=%{?with_gphoto2:true}%{!?with_gphoto2:false} \
@@ -322,6 +319,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dhttp=%{?with_http:true}%{!?with_http:false} \
 	-Dkeyring=%{?with_keyring:true}%{!?with_keyring:false} \
 	-Dlibmtp=%{?with_mtp:true}%{!?with_mtp:false} \
+	-Dman=%{?with_doc:true}%{!?with_doc:false} \
 	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
 	-Dsamba=%{?with_samba:true}%{!?with_samba:false} \
 	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
