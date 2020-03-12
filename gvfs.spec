@@ -39,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.42.2
+Version:	1.44.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.42/%{name}-%{version}.tar.xz
-# Source0-md5:	8dea2f6a3f327a814a347758d4350e4b
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.44/%{name}-%{version}.tar.xz
+# Source0-md5:	2fea465b173b7f2d80b6ce6f7b064925
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://live.gnome.org/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
@@ -64,7 +64,7 @@ BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
 %{?with_fuse:BuildRequires:	libfuse3-devel >= 3.0.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
-%{?with_google:BuildRequires:	libgdata-devel >= 0.17.9}
+%{?with_google:BuildRequires:	libgdata-devel >= 0.17.11}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.15}
@@ -239,7 +239,7 @@ Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gnome-online-accounts-libs >= 3.18.0
-Requires:	libgdata >= 0.17.9
+Requires:	libgdata >= 0.17.11
 
 %description google
 This package provides support for Google Drive to applications using
