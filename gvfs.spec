@@ -321,7 +321,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dlibmtp=%{?with_mtp:true}%{!?with_mtp:false} \
 	-Dman=%{?with_doc:true}%{!?with_doc:false} \
 	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
-	-Dsamba=%{?with_samba:true}%{!?with_samba:false} \
+	-Dsmb=%{?with_samba:true}%{!?with_samba:false} \
 	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
 	-Dudev=%{?with_udev:true}%{!?with_udev:false} \
 	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
