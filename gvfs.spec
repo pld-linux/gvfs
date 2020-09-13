@@ -39,14 +39,14 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.44.1
+Version:	1.46.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.44/%{name}-%{version}.tar.xz
-# Source0-md5:	72383474f52d05c21ef2be96d0b91974
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.46/%{name}-%{version}.tar.xz
+# Source0-md5:	b2e4d9e29e7354f063292a0761dce094
 Patch0:		set_attributes_from_info-v1.patch
-URL:		https://live.gnome.org/gvfs
+URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
 BuildRequires:	dbus-devel
@@ -54,7 +54,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.58.0
+BuildRequires:	glib2-devel >= 1:2.65.1
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 %{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
@@ -79,6 +79,7 @@ BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	meson >= 0.50.0
 BuildRequires:	ninja >= 1.5
+# find_program('ssh') for sftp
 BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel >= 0.114}
@@ -89,13 +90,12 @@ BuildRequires:	tar >= 1:1.22
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.58.0
+Requires(post,postun):	glib2 >= 1:2.65.1
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 Requires:	gsettings-desktop-schemas >= 3.33.0
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 %{?with_nfs:Requires:	libnfs >= 1.9.8}
-Requires:	libplist >= 0.15
 Requires:	libsoup >= 2.58.0
 Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
@@ -133,7 +133,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.58.0
+Requires:	glib2 >= 1:2.65.1
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -147,7 +147,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.58.0
+Requires:	glib2-devel >= 1:2.65.1
 
 %description devel
 Header files for gvfs library.
@@ -161,6 +161,7 @@ Summary(pl.UTF-8):	Obsługa AFC dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libimobiledevice >= 1.2.0
+Requires:	libplist >= 0.15
 Requires:	usbmuxd
 
 %description afc
