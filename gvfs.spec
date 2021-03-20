@@ -39,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.46.2
+Version:	1.48.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.46/%{name}-%{version}.tar.xz
-# Source0-md5:	852fff7ae3215012f3e143d0b13a81ff
+Source0:	https://download.gnome.org/sources/gvfs/1.48/%{name}-%{version}.tar.xz
+# Source0-md5:	fd4dda373f4c316c731a05e0255434bc
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
@@ -64,7 +64,7 @@ BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
 %{?with_fuse:BuildRequires:	libfuse3-devel >= 3.0.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
-%{?with_google:BuildRequires:	libgdata-devel >= 0.17.11}
+%{?with_google:BuildRequires:	libgdata-devel >= 0.18.0}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.15}
@@ -77,13 +77,13 @@ BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.50.0
+BuildRequires:	meson >= 0.53.0
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
 BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel >= 0.114}
-BuildRequires:	rpmbuild(macros) >= 1.727
+BuildRequires:	rpmbuild(macros) >= 1.736
 %{?with_systemd:BuildRequires:	systemd-devel >= 1:206}
 BuildRequires:	tar >= 1:1.22
 %{?with_udev:BuildRequires:	udev-devel >= 1:138}
@@ -240,7 +240,7 @@ Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	gnome-online-accounts-libs >= 3.18.0
-Requires:	libgdata >= 0.17.11
+Requires:	libgdata >= 0.18.0
 
 %description google
 This package provides support for Google Drive to applications using
@@ -327,13 +327,13 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dudev=%{?with_udev:true}%{!?with_udev:false} \
 	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
 
-%meson_build -C build
+%ninja_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT%{bash_compdir}
-%meson_install -C build
+%ninja_install -C build
 
 %find_lang gvfs
 
