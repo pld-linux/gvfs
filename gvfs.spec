@@ -12,7 +12,6 @@
 %bcond_without	goa	# GOA backend (needed also for google)
 %bcond_without	google	# Google backend
 %bcond_without	gphoto2	# gphoto2 support
-%bcond_without	gtk	# GTK+
 %bcond_without	gudev	# gudev support (needed for gphoto2, mtp, udisks2)
 %bcond_without	http	# HTTP/DAV backend
 %bcond_without	keyring	# GNOME Keyring support in gvfs and udisks plugin
@@ -20,7 +19,6 @@
 %bcond_without	nfs	# NFS support
 %bcond_without	samba	# SMB support
 %bcond_without	systemd	# libsystemd-login support
-%bcond_without	udev	# udev support (needed also for gphoto2, mtp, udisks2)
 %bcond_without	udisks2	# libudisks2 support
 
 %if %{without gudev}
@@ -40,7 +38,7 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.48.1
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.48/%{name}-%{version}.tar.xz
@@ -57,7 +55,7 @@ BuildRequires:	gettext-tools >= 0.19.4
 BuildRequires:	glib2-devel >= 1:2.65.1
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
-%{?with_gtk:BuildRequires:	gtk+3-devel >= 3.0}
+BuildRequires:	gtk+3-devel >= 3.0
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
 %{?with_bluray:BuildRequires:	libbluray-devel}
 %{?with_admin:BuildRequires:	libcap-devel}
@@ -86,7 +84,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.736
 %{?with_systemd:BuildRequires:	systemd-devel >= 1:206}
 BuildRequires:	tar >= 1:1.22
-%{?with_udev:BuildRequires:	udev-devel >= 1:138}
+BuildRequires:	udev-devel >= 1:138
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
@@ -101,7 +99,7 @@ Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
 Requires:	polkit-libs >= 0.114
 %{?with_gudev:Requires:	udev-glib >= 1:147}
-%{?with_udev:Requires:	udev-libs >= 1:138}
+Requires:	udev-libs >= 1:138
 %{?with_udisks2:Requires:	udisks2 >= 1.97.0}
 %{?with_afc:Suggests:	%{name}-afc}
 %{?with_afp:Suggests:	%{name}-afp}
@@ -307,24 +305,21 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
 	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
 	-Darchive=%{?with_archive:true}%{!?with_archive:false} \
-	-Davahi=%{?with_avahi:true}%{!?with_avahi:false} \
+	-Ddnssd=%{?with_avahi:true}%{!?with_avahi:false} \
 	-Dbluray=%{?with_bluray:true}%{!?with_bluray:false} \
 	-Dcdda=%{?with_cdda:true}%{!?with_cdda:false} \
-	-Ddocumentation=%{?with_doc:true}%{!?with_doc:false} \
 	-Dfuse=%{?with_fuse:true}%{!?with_fuse:false} \
 	-Dgoa=%{?with_goa:true}%{!?with_goa:false} \
 	-Dgoogle=%{?with_google:true}%{!?with_google:false} \
 	-Dgphoto2=%{?with_gphoto2:true}%{!?with_gphoto2:false} \
-	-Dgtk=%{?with_gtk:true}%{!?with_gtk:false} \
 	-Dgudev=%{?with_gudev:true}%{!?with_gudev:false} \
 	-Dhttp=%{?with_http:true}%{!?with_http:false} \
 	-Dkeyring=%{?with_keyring:true}%{!?with_keyring:false} \
-	-Dlibmtp=%{?with_mtp:true}%{!?with_mtp:false} \
+	-Dmtp=%{?with_mtp:true}%{!?with_mtp:false} \
 	-Dman=%{?with_doc:true}%{!?with_doc:false} \
 	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
 	-Dsmb=%{?with_samba:true}%{!?with_samba:false} \
 	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
-	-Dudev=%{?with_udev:true}%{!?with_udev:false} \
 	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
 
 %ninja_build -C build
