@@ -271,6 +271,7 @@ Summary(pl.UTF-8):	Obsługa MTP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libmtp >= 1.1.15
+Suggests:	udev-libmtp
 
 %description mtp
 This package provides support for reading and writing files on MTP
