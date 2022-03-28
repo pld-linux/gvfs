@@ -37,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.48.1
-Release:	3
+Version:	1.50.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.48/%{name}-%{version}.tar.xz
-# Source0-md5:	a801309d09457bbd0c8a0a871fec0ac3
+Source0:	https://download.gnome.org/sources/gvfs/1.50/%{name}-%{version}.tar.xz
+# Source0-md5:	6a8290053d3c0a8d8035b789d8ad3881
 Patch0:		set_attributes_from_info-v1.patch
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
@@ -52,7 +52,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr-devel >= 3
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.65.1
+BuildRequires:	glib2-devel >= 1:2.70.0
 %{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 BuildRequires:	gtk+3-devel >= 3.0
@@ -70,12 +70,12 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
-%{?with_http:BuildRequires:	libsoup-devel >= 2.58.0}
+%{?with_http:BuildRequires:	libsoup3-devel >= 3.0.0}
 BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.53.0
+BuildRequires:	meson >= 0.56.0
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
 BuildRequires:	openssh-clients
@@ -88,13 +88,13 @@ BuildRequires:	udev-devel >= 1:138
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.65.1
+Requires(post,postun):	glib2 >= 1:2.70.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 Requires:	gsettings-desktop-schemas >= 3.33.0
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
 %{?with_nfs:Requires:	libnfs >= 1.9.8}
-Requires:	libsoup >= 2.58.0
+Requires:	libsoup3 >= 3.0.0
 Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
 Requires:	polkit-libs >= 0.114
@@ -131,7 +131,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.65.1
+Requires:	glib2 >= 1:2.70.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -145,7 +145,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.65.1
+Requires:	glib2-devel >= 1:2.70.0
 
 %description devel
 Header files for gvfs library.
