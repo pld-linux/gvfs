@@ -435,10 +435,8 @@ fi
 %endif
 
 # gtk
-%if %{with gtk}
 %attr(755,root,root) %{_libexecdir}/gvfsd-recent
 %{_datadir}/gvfs/mounts/recent.mount
-%endif
 
 # nfs
 %if %{with nfs}
