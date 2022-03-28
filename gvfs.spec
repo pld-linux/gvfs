@@ -43,7 +43,6 @@ License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.50/%{name}-%{version}.tar.xz
 # Source0-md5:	6a8290053d3c0a8d8035b789d8ad3881
-Patch0:		set_attributes_from_info-v1.patch
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -298,7 +297,6 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %prep
 %setup -q
-#%%patch0 -p1
 
 %build
 %meson build \
