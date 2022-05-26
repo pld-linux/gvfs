@@ -402,6 +402,7 @@ fi
 %{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/computer.mount
 %{_datadir}/gvfs/mounts/ftp.mount
+%{_datadir}/gvfs/mounts/ftpis.mount
 %{_datadir}/gvfs/mounts/ftps.mount
 %{_datadir}/gvfs/mounts/localtest.mount
 %{_datadir}/gvfs/mounts/network.mount
@@ -483,7 +484,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/gvfsd-afc
 %{_datadir}/dbus-1/services/org.gtk.vfs.AfcVolumeMonitor.service
 %{_datadir}/gvfs/mounts/afc.mount
-%{_datadir}/gvfs/mounts/ftpis.mount
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
 %{systemduserunitdir}/gvfs-afc-volume-monitor.service
 %endif
