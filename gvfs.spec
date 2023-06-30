@@ -109,7 +109,7 @@ Requires:	udev-libs >= 1:138
 %{?with_gphoto2:Suggests:	%{name}-gphoto2}
 %{?with_mtp:Suggests:	%{name}-mtp}
 %{?with_samba:Suggests:	%{name}-smb}
-Obsoletes:	bash-completion-gvfs
+Obsoletes:	bash-completion-gvfs < 1.32
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
