@@ -37,12 +37,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.50.6
+Version:	1.52.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.50/%{name}-%{version}.tar.xz
-# Source0-md5:	e780a221d643d2daf9f694a692d23006
+Source0:	https://download.gnome.org/sources/gvfs/1.52/%{name}-%{version}.tar.xz
+# Source0-md5:	dc2809b21d27b02ebe5bb9aa2b9f1c1e
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -64,7 +64,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_google:BuildRequires:	libgdata-devel >= 0.18.0}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
-%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.15}
+%{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.21}
 %{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.8}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
@@ -74,7 +74,7 @@ BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.56.0
+BuildRequires:	meson >= 0.57.0
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
 BuildRequires:	openssh-clients
@@ -269,7 +269,7 @@ Summary:	MTP support for gvfs
 Summary(pl.UTF-8):	Obsługa MTP dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libmtp >= 1.1.15
+Requires:	libmtp >= 1.1.21
 Suggests:	udev-libmtp
 
 %description mtp
