@@ -1,25 +1,26 @@
 #
 # Conditional build:
-%bcond_without	doc	# docs building and packaging
-%bcond_without	admin	# admin backend
-%bcond_without	afc	# AFC backend
-%bcond_without	afp	# AFP support
-%bcond_without	archive	# archive support
-%bcond_without	avahi	# DNS-SD / Avahi support
-%bcond_without	bluray	# bluray metadata support
-%bcond_without	cdda	# CDDA backend
-%bcond_without	fuse	# FUSE support
-%bcond_without	goa	# GOA backend (needed also for google)
-%bcond_without	google	# Google backend
-%bcond_without	gphoto2	# gphoto2 support
-%bcond_without	gudev	# gudev support (needed for gphoto2, mtp, udisks2)
-%bcond_without	http	# HTTP/DAV backend
-%bcond_without	keyring	# GNOME Keyring support in gvfs and udisks plugin
-%bcond_without	mtp	# MTP support
-%bcond_without	nfs	# NFS support
-%bcond_without	samba	# SMB support
-%bcond_without	systemd	# libsystemd-login support
-%bcond_without	udisks2	# libudisks2 support
+%bcond_without	doc		# docs building and packaging
+%bcond_without	admin		# admin backend
+%bcond_without	afc		# AFC backend
+%bcond_without	afp		# AFP support
+%bcond_without	archive		# archive support
+%bcond_without	avahi		# DNS-SD / Avahi support
+%bcond_without	bluray		# bluray metadata support
+%bcond_without	cdda		# CDDA backend
+%bcond_without	fuse		# FUSE support
+%bcond_without	goa		# GOA backend (needed also for google)
+%bcond_without	google		# Google backend
+%bcond_without	gphoto2		# gphoto2 support
+%bcond_without	gudev		# gudev support (needed for gphoto2, mtp, udisks2)
+%bcond_without	http		# HTTP/DAV backend
+%bcond_without	keyring		# GNOME Keyring support in gvfs and udisks plugin
+%bcond_without	mtp		# MTP support
+%bcond_without	nfs		# NFS support
+%bcond_without	onedrive	# OneDrive support
+%bcond_without	samba		# SMB support
+%bcond_without	systemd		# libsystemd-login support
+%bcond_without	udisks2		# libudisks2 support
 
 %if %{without gudev}
 %undefine	with_gphoto2
@@ -37,22 +38,24 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.52.2
+Version:	1.54.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.52/%{name}-%{version}.tar.xz
-# Source0-md5:	87c087d868352e702e5dcaf42eb729ea
+Source0:	https://download.gnome.org/sources/gvfs/1.54/%{name}-%{version}.tar.xz
+# Source0-md5:	f2c1db236533c19cb3c3e0a468aac59a
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
 BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-dtd42-xml}
 %{?with_doc:BuildRequires:	docbook-style-xsl}
-BuildRequires:	gcr-devel >= 3
+BuildRequires:	gcr4-devel >= 4
 BuildRequires:	gettext-tools >= 0.19.4
 BuildRequires:	glib2-devel >= 1:2.70.0
-%{?with_goa:BuildRequires:	gnome-online-accounts-devel >= 3.18.0}
+%if %{with goa} || %{with onedrive}
+BuildRequires:	gnome-online-accounts-devel >= 3.18.0
+%endif
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 BuildRequires:	gtk+3-devel >= 3.0
 %{?with_archive:BuildRequires:	libarchive-devel >= 3.0.22}
@@ -75,6 +78,7 @@ BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	meson >= 0.57.0
+%{?with_onedrive:BuildRequires:	msgraph-devel}
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
 BuildRequires:	openssh-clients
@@ -281,6 +285,21 @@ Ten pakiet zapewnia obsługę odczytu i zapisu plików na urządzeniach
 obsługujących protokół MTP (Media Transfer Protocol) dla aplikacji
 wykorzystujących gvfs.
 
+%package onedrive
+Summary:	OneDrive support for gvfs
+Summary(pl.UTF-8):	Obsługa OneDrive dla gvfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	gnome-online-accounts-libs >= 3.18.0
+
+%description onedrive
+This package provides support for OneDrive to applications using
+gvfs.
+
+%description onedrive -l pl.UTF-8
+Ten pakiet zapewnia obsługę OneDrive dla aplikacji
+wykorzystujących gvfs.
+
 %package smb
 Summary:	Windows fileshare support for gvfs
 Summary(pl.UTF-8):	Obsługa udziałów sieciowych Windows dla gvfs
@@ -317,6 +336,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dmtp=%{?with_mtp:true}%{!?with_mtp:false} \
 	-Dman=%{?with_doc:true}%{!?with_doc:false} \
 	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
+	-Donedrive=%{?with_onedrive:true}%{!?with_onedrive:false} \
 	-Dsmb=%{?with_samba:true}%{!?with_samba:false} \
 	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
 	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
@@ -373,6 +393,9 @@ exit 0
 %post mtp
 %reload_mount_files
 
+%post onedrive
+%reload_mount_files
+
 %post smb
 %glib_compile_schemas
 %reload_mount_files
@@ -397,6 +420,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/gvfsd-network
 %attr(755,root,root) %{_libexecdir}/gvfsd-sftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-trash
+%attr(755,root,root) %{_libexecdir}/gvfsd-wsdd
 %{_datadir}/dbus-1/services/org.gtk.vfs.Daemon.service
 %{_datadir}/dbus-1/services/org.gtk.vfs.Metadata.service
 %dir %{_datadir}/gvfs
@@ -411,7 +435,9 @@ fi
 %{_datadir}/gvfs/mounts/network.mount
 %{_datadir}/gvfs/mounts/sftp.mount
 %{_datadir}/gvfs/mounts/trash.mount
+%{_datadir}/gvfs/mounts/wsdd.mount
 %{_datadir}/glib-2.0/schemas/org.gnome.system.gvfs.enums.xml
+%{_datadir}/glib-2.0/schemas/org.gnome.system.wsdd.gschema.xml
 %{systemduserunitdir}/gvfs-daemon.service
 %{systemduserunitdir}/gvfs-metadata.service
 
@@ -556,6 +582,13 @@ fi
 %{_datadir}/gvfs/mounts/mtp.mount
 %{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
 %{systemduserunitdir}/gvfs-mtp-volume-monitor.service
+%endif
+
+%if %{with onedrive}
+%files onedrive
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/gvfsd-onedrive
+%{_datadir}/gvfs/mounts/onedrive.mount
 %endif
 
 %if %{with samba}
