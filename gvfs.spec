@@ -39,7 +39,7 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.54.0
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.54/%{name}-%{version}.tar.xz
@@ -52,7 +52,7 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr4-devel >= 4
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.70.0
+BuildRequires:	glib2-devel >= 1:2.80.0
 %if %{with goa} || %{with onedrive}
 BuildRequires:	gnome-online-accounts-devel >= 3.18.0
 %endif
@@ -91,7 +91,7 @@ BuildRequires:	udev-devel >= 1:138
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.70.0
+Requires(post,postun):	glib2 >= 1:2.80.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 Requires:	gsettings-desktop-schemas >= 3.33.0
@@ -134,7 +134,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.70.0
+Requires:	glib2 >= 1:2.80.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -148,7 +148,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.70.0
+Requires:	glib2-devel >= 1:2.80.0
 
 %description devel
 Header files for gvfs library.
