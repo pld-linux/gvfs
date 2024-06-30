@@ -7,6 +7,7 @@
 %bcond_without	archive		# archive support
 %bcond_without	avahi		# DNS-SD / Avahi support
 %bcond_without	bluray		# bluray metadata support
+%bcond_without	burn		# burn backend
 %bcond_without	cdda		# CDDA backend
 %bcond_without	fuse		# FUSE support
 %bcond_without	goa		# GOA backend (needed also for google)
@@ -38,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.54.1
+Version:	1.54.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.54/%{name}-%{version}.tar.xz
-# Source0-md5:	4deb7730bcbf87e3aa89d92cb9fd352a
+# Source0-md5:	587c5b279ec3020c597f3ab3f6a73bbd
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -323,6 +324,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
 	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
 	-Darchive=%{?with_archive:true}%{!?with_archive:false} \
+	%{?with_burn:-Dburn=true} \
 	-Ddnssd=%{?with_avahi:true}%{!?with_avahi:false} \
 	-Dbluray=%{?with_bluray:true}%{!?with_bluray:false} \
 	-Dcdda=%{?with_cdda:true}%{!?with_cdda:false} \
@@ -412,7 +414,6 @@ fi
 %attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
 #%dir %{_libexecdir}  # equal %{_libdir}/%{name}, packaged in -libs
 %attr(755,root,root) %{_libexecdir}/gvfsd
-%attr(755,root,root) %{_libexecdir}/gvfsd-burn
 %attr(755,root,root) %{_libexecdir}/gvfsd-computer
 %attr(755,root,root) %{_libexecdir}/gvfsd-ftp
 %attr(755,root,root) %{_libexecdir}/gvfsd-localtest
@@ -426,7 +427,6 @@ fi
 %dir %{_datadir}/gvfs
 %dir %{_datadir}/gvfs/mounts
 %dir %{_datadir}/gvfs/remote-volume-monitors
-%{_datadir}/gvfs/mounts/burn.mount
 %{_datadir}/gvfs/mounts/computer.mount
 %{_datadir}/gvfs/mounts/ftp.mount
 %{_datadir}/gvfs/mounts/ftpis.mount
@@ -447,6 +447,12 @@ fi
 %{_datadir}/gvfs/mounts/admin.mount
 %{_datadir}/polkit-1/actions/org.gtk.vfs.file-operations.policy
 %{_datadir}/polkit-1/rules.d/org.gtk.vfs.file-operations.rules
+%endif
+
+# burn
+%if %{with burn}
+%attr(755,root,root) %{_libexecdir}/gvfsd-burn
+%{_datadir}/gvfs/mounts/burn.mount
 %endif
 
 # cdda
