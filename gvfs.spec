@@ -39,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.54.2
+Version:	1.56.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.54/%{name}-%{version}.tar.xz
-# Source0-md5:	587c5b279ec3020c597f3ab3f6a73bbd
+Source0:	https://download.gnome.org/sources/gvfs/1.56/%{name}-%{version}.tar.xz
+# Source0-md5:	f4aee0683768c96ad580576992e85c00
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -341,7 +341,8 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Donedrive=%{?with_onedrive:true}%{!?with_onedrive:false} \
 	-Dsmb=%{?with_samba:true}%{!?with_samba:false} \
 	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
-	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false}
+	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false} \
+	-Ddeprecated_apis=true
 
 %ninja_build -C build
 
