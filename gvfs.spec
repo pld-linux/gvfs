@@ -85,7 +85,7 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	openssh-clients
 BuildRequires:	pkgconfig
 %{?with_admin:BuildRequires:	polkit-devel >= 0.114}
-BuildRequires:	rpmbuild(macros) >= 1.736
+BuildRequires:	rpmbuild(macros) >= 2.042
 %{?with_systemd:BuildRequires:	systemd-devel >= 1:206}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-devel >= 1:138
@@ -319,7 +319,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 %setup -q
 
 %build
-%meson build \
+%meson \
 	-Dadmin=%{?with_admin:true}%{!?with_admin:false} \
 	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
 	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
@@ -344,13 +344,13 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false} \
 	-Ddeprecated_apis=true
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{bash_compdir},%{_datadir}/gvfs/remote-volume-monitors}
-%ninja_install -C build
+%meson_install
 
 # not supported by glibc yet
 %{__rm} -r $RPM_BUILD_ROOT%{_localedir}/ie
