@@ -40,11 +40,12 @@ Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
 Version:	1.56.1
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.56/%{name}-%{version}.tar.xz
 # Source0-md5:	5ba12cd02b17c058aa71adc39c5eb6cf
+Patch0:		%{name}-libnfs.patch
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -69,7 +70,7 @@ BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
 %{?with_afc:BuildRequires:	libimobiledevice-devel >= 1.2.0}
 %{?with_mtp:BuildRequires:	libmtp-devel >= 1.1.21}
-%{?with_nfs:BuildRequires:	libnfs-devel >= 1.9.8}
+%{?with_nfs:BuildRequires:	libnfs-devel >= 6.0.0}
 %{?with_afc:BuildRequires:	libplist-devel >= 0.15}
 %{?with_keyring:BuildRequires:	libsecret-devel}
 %{?with_samba:BuildRequires:	libsmbclient-devel >= 3.4}
@@ -97,7 +98,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 Requires:	gsettings-desktop-schemas >= 3.33.0
 %{?with_cdda:Requires:	libcdio-paranoia >= 0.78.2}
-%{?with_nfs:Requires:	libnfs >= 1.9.8}
+%{?with_nfs:Requires:	libnfs >= 6.0.0}
 %{?with_http:Requires:	libsoup3 >= 3.0.0}
 Requires:	libusb >= 1.0.21
 Requires:	libxml2 >= 1:2.6.31
@@ -317,6 +318,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %prep
 %setup -q
+%patch -P0 -p1
 
 %build
 %meson \
