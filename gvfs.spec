@@ -39,13 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.56.1
-Release:	7
+Version:	1.58.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.56/%{name}-%{version}.tar.xz
-# Source0-md5:	5ba12cd02b17c058aa71adc39c5eb6cf
-Patch0:		%{name}-libnfs.patch
+Source0:	https://download.gnome.org/sources/gvfs/1.58/%{name}-%{version}.tar.xz
+# Source0-md5:	00508bb91f4402c2953a531c6dcdf3f4
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -54,9 +53,9 @@ BuildRequires:	dbus-devel
 %{?with_doc:BuildRequires:	docbook-style-xsl}
 BuildRequires:	gcr4-devel >= 4
 BuildRequires:	gettext-tools >= 0.19.4
-BuildRequires:	glib2-devel >= 1:2.80.0
+BuildRequires:	glib2-devel >= 1:2.83.0
 %if %{with goa} || %{with onedrive}
-BuildRequires:	gnome-online-accounts-devel >= 3.18.0
+BuildRequires:	gnome-online-accounts-devel >= 3.53.1
 %endif
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 BuildRequires:	gtk+3-devel >= 3.0
@@ -64,7 +63,7 @@ BuildRequires:	gtk+3-devel >= 3.0
 %{?with_bluray:BuildRequires:	libbluray-devel}
 %{?with_admin:BuildRequires:	libcap-devel}
 %{?with_cdda:BuildRequires:	libcdio-paranoia-devel >= 0.78.2}
-%{?with_fuse:BuildRequires:	libfuse3-devel >= 3.0.0}
+%{?with_fuse:BuildRequires:	libfuse3-devel >= 3.17.0}
 BuildRequires:	libgcrypt-devel >= 1.2.2
 %{?with_google:BuildRequires:	libgdata-devel >= 0.18.0}
 %{?with_gphoto2:BuildRequires:	libgphoto2-devel >= 2.5.0}
@@ -80,7 +79,7 @@ BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
 BuildRequires:	meson >= 0.57.0
-%{?with_onedrive:BuildRequires:	msgraph-devel}
+%{?with_onedrive:BuildRequires:	msgraph-devel >= 0.3.0}
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
 BuildRequires:	openssh-clients
@@ -93,7 +92,7 @@ BuildRequires:	udev-devel >= 1:138
 %{?with_gudev:BuildRequires:	udev-glib-devel >= 1:147}
 %{?with_udisks2:BuildRequires:	udisks2-devel >= 1.97.0}
 BuildRequires:	xz
-Requires(post,postun):	glib2 >= 1:2.80.0
+Requires(post,postun):	glib2 >= 1:2.83.0
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_avahi:Requires:	avahi-glib >= 0.6.22}
 Requires:	gsettings-desktop-schemas >= 3.33.0
@@ -136,7 +135,7 @@ gfvs-a do wszystkich aplikacji używających API gio.
 Summary:	Common GVFS shared libraries
 Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
-Requires:	glib2 >= 1:2.80.0
+Requires:	glib2 >= 1:2.83.0
 Conflicts:	gvfs < 1.22.3-2
 
 %description libs
@@ -150,7 +149,7 @@ Summary:	Header files for gvfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.80.0
+Requires:	glib2-devel >= 1:2.83.0
 
 %description devel
 Header files for gvfs library.
@@ -212,7 +211,7 @@ Summary:	FUSE support for gvfs
 Summary(pl.UTF-8):	Obsługa FUSE dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libfuse3
+Requires:	libfuse3 >= 3.17.0
 
 %description fuse
 This package provides support for applications not using gio to access
@@ -227,7 +226,7 @@ Summary:	GOA support for gvfs
 Summary(pl.UTF-8):	Obsługa GOA dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.18.0
+Requires:	gnome-online-accounts-libs >= 3.53.1
 
 %description goa
 This package provides seamless integration with gnome-online-accounts
@@ -242,7 +241,7 @@ Summary:	Google Drive support for gvfs
 Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.18.0
+Requires:	gnome-online-accounts-libs >= 3.53.1
 Requires:	libgdata >= 0.18.0
 
 %description google
@@ -292,7 +291,8 @@ Summary:	OneDrive support for gvfs
 Summary(pl.UTF-8):	Obsługa OneDrive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.18.0
+Requires:	gnome-online-accounts-libs >= 3.53.1
+Requires:	msgraph >= 0.3.0
 
 %description onedrive
 This package provides support for OneDrive to applications using
@@ -318,7 +318,6 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %prep
 %setup -q
-%patch -P0 -p1
 
 %build
 %meson \
