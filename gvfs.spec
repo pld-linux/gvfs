@@ -39,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.58.1
+Version:	1.60.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.58/%{name}-%{version}.tar.xz
-# Source0-md5:	498ba6a36df2764d5fb463596e0334bb
+Source0:	https://download.gnome.org/sources/gvfs/1.60/%{name}-%{version}.tar.xz
+# Source0-md5:	36e8616c3d315cde92d2560f99f7c5c8
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -55,7 +55,7 @@ BuildRequires:	gcr4-devel >= 4
 BuildRequires:	gettext-tools >= 0.19.4
 BuildRequires:	glib2-devel >= 1:2.83.0
 %if %{with goa} || %{with onedrive}
-BuildRequires:	gnome-online-accounts-devel >= 3.53.1
+BuildRequires:	gnome-online-accounts-devel >= 3.57.0
 %endif
 BuildRequires:	gsettings-desktop-schemas-devel >= 3.33.0
 BuildRequires:	gtk+3-devel >= 3.0
@@ -78,7 +78,7 @@ BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libusb-devel >= 1.0.21
 BuildRequires:	libxml2-devel >= 1:2.6.31
 %{?with_doc:BuildRequires:	libxslt-progs}
-BuildRequires:	meson >= 0.57.0
+BuildRequires:	meson >= 0.60.0
 %{?with_onedrive:BuildRequires:	msgraph-devel >= 0.3.0}
 BuildRequires:	ninja >= 1.5
 # find_program('ssh') for sftp
@@ -226,7 +226,7 @@ Summary:	GOA support for gvfs
 Summary(pl.UTF-8):	Obsługa GOA dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.53.1
+Requires:	gnome-online-accounts-libs >= 3.57.0
 
 %description goa
 This package provides seamless integration with gnome-online-accounts
@@ -241,7 +241,7 @@ Summary:	Google Drive support for gvfs
 Summary(pl.UTF-8):	Obsługa Google Drive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.53.1
+Requires:	gnome-online-accounts-libs >= 3.57.0
 Requires:	libgdata >= 0.18.0
 
 %description google
@@ -291,7 +291,7 @@ Summary:	OneDrive support for gvfs
 Summary(pl.UTF-8):	Obsługa OneDrive dla gvfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gnome-online-accounts-libs >= 3.53.1
+Requires:	gnome-online-accounts-libs >= 3.57.0
 Requires:	msgraph >= 0.3.0
 
 %description onedrive
