@@ -105,20 +105,20 @@ Requires:	polkit-libs >= 0.114
 %{?with_gudev:Requires:	udev-glib >= 1:147}
 Requires:	udev-libs >= 1:138
 %{?with_udisks2:Requires:	udisks2 >= 1.97.0}
-%{?with_afc:Suggests:	%{name}-afc}
-%{?with_afp:Suggests:	%{name}-afp}
-%{?with_archive:Suggests:	%{name}-archive}
-%{?with_fuse:Suggests:	%{name}-fuse}
-%{?with_goa:Suggests:	%{name}-goa}
-%{?with_google:Suggests:	%{name}-google}
-%{?with_gphoto2:Suggests:	%{name}-gphoto2}
-%{?with_mtp:Suggests:	%{name}-mtp}
-%{?with_samba:Suggests:	%{name}-smb}
+%{?with_afc:Suggests:	%{name}-afc = %{version}-%{release}}
+%{?with_afp:Suggests:	%{name}-afp = %{version}-%{release}}
+%{?with_archive:Suggests:	%{name}-archive = %{version}-%{release}}
+%{?with_fuse:Suggests:	%{name}-fuse = %{version}-%{release}}
+%{?with_goa:Suggests:	%{name}-goa = %{version}-%{release}}
+%{?with_google:Suggests:	%{name}-google = %{version}-%{release}}
+%{?with_gphoto2:Suggests:	%{name}-gphoto2 = %{version}-%{release}}
+%{?with_mtp:Suggests:	%{name}-mtp = %{version}-%{release}}
+%{?with_samba:Suggests:	%{name}-smb = %{version}-%{release}}
 Obsoletes:	bash-completion-gvfs < 1.32
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_libexecdir	%{_libdir}/%{name}
+%define		pkglibexecdir	%{_libexecdir}/%{name}
 
 %description
 gvfs is a userspace virtual filesystem where mount runs as a separate
@@ -321,6 +321,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 
 %build
 %meson \
+	--libexecdir=%{pkglibexecdir} \
 	-Dadmin=%{?with_admin:true}%{!?with_admin:false} \
 	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
 	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
@@ -412,18 +413,20 @@ fi
 %files -f gvfs.lang
 %defattr(644,root,root,755)
 %doc CONTRIBUTING.md NEWS README.md
-%attr(755,root,root) %{_libdir}/gio/modules/libgioremote-volume-monitor.so
-%attr(755,root,root) %{_libdir}/gio/modules/libgvfsdbus.so
-#%dir %{_libexecdir}  # equal %{_libdir}/%{name}, packaged in -libs
-%attr(755,root,root) %{_libexecdir}/gvfsd
-%attr(755,root,root) %{_libexecdir}/gvfsd-computer
-%attr(755,root,root) %{_libexecdir}/gvfsd-ftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-localtest
-%attr(755,root,root) %{_libexecdir}/gvfsd-metadata
-%attr(755,root,root) %{_libexecdir}/gvfsd-network
-%attr(755,root,root) %{_libexecdir}/gvfsd-sftp
-%attr(755,root,root) %{_libexecdir}/gvfsd-trash
-%attr(755,root,root) %{_libexecdir}/gvfsd-wsdd
+%{_libdir}/gio/modules/libgioremote-volume-monitor.so
+%{_libdir}/gio/modules/libgvfsdbus.so
+%if "%{pkglibexecdir}" != "%{_libdir}/%{name}"
+%dir %{pkglibexecdir}
+%endif
+%attr(755,root,root) %{pkglibexecdir}/gvfsd
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-computer
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-ftp
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-localtest
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-metadata
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-network
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-sftp
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-trash
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-wsdd
 %{_datadir}/dbus-1/services/org.gtk.vfs.Daemon.service
 %{_datadir}/dbus-1/services/org.gtk.vfs.Metadata.service
 %dir %{_datadir}/gvfs
@@ -445,7 +448,7 @@ fi
 
 # admin
 %if %{with admin}
-%attr(755,root,root) %{_libexecdir}/gvfsd-admin
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-admin
 %{_datadir}/gvfs/mounts/admin.mount
 %{_datadir}/polkit-1/actions/org.gtk.vfs.file-operations.policy
 %{_datadir}/polkit-1/rules.d/org.gtk.vfs.file-operations.rules
@@ -453,38 +456,38 @@ fi
 
 # burn
 %if %{with burn}
-%attr(755,root,root) %{_libexecdir}/gvfsd-burn
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-burn
 %{_datadir}/gvfs/mounts/burn.mount
 %endif
 
 # cdda
 %if %{with cdda}
-%attr(755,root,root) %{_libexecdir}/gvfsd-cdda
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-cdda
 %{_datadir}/gvfs/mounts/cdda.mount
 %endif
 
 # http
 %if %{with http}
-%attr(755,root,root) %{_libexecdir}/gvfsd-dav
-%attr(755,root,root) %{_libexecdir}/gvfsd-http
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-dav
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-http
 %{_datadir}/gvfs/mounts/http.mount
 %{_datadir}/gvfs/mounts/dav.mount
 %{?with_avahi:%{_datadir}/gvfs/mounts/dav+sd.mount}
 %endif
 
 # gtk
-%attr(755,root,root) %{_libexecdir}/gvfsd-recent
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-recent
 %{_datadir}/gvfs/mounts/recent.mount
 
 # nfs
 %if %{with nfs}
-%attr(755,root,root) %{_libexecdir}/gvfsd-nfs
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-nfs
 %{_datadir}/gvfs/mounts/nfs.mount
 %endif
 
 # udisks2
 %if %{with udisks2}
-%attr(755,root,root) %{_libexecdir}/gvfs-udisks2-volume-monitor
+%attr(755,root,root) %{pkglibexecdir}/gvfs-udisks2-volume-monitor
 %{_datadir}/dbus-1/services/org.gtk.vfs.UDisks2VolumeMonitor.service
 %{_datadir}/gvfs/remote-volume-monitors/udisks2.monitor
 %{systemduserunitdir}/gvfs-udisks2-volume-monitor.service
@@ -492,7 +495,7 @@ fi
 
 # avahi
 %if %{with avahi}
-%attr(755,root,root) %{_libexecdir}/gvfsd-dnssd
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-dnssd
 %{_datadir}/gvfs/mounts/dns-sd.mount
 %{_datadir}/GConf/gsettings/gvfs-dns-sd.convert
 %{_datadir}/glib-2.0/schemas/org.gnome.system.dns_sd.gschema.xml
@@ -507,8 +510,8 @@ fi
 %files libs
 %defattr(644,root,root,755)
 %dir %{_libdir}/%{name}
-%attr(755,root,root) %{_libdir}/%{name}/libgvfscommon.so
-%attr(755,root,root) %{_libdir}/%{name}/libgvfsdaemon.so
+%{_libdir}/%{name}/libgvfscommon.so
+%{_libdir}/%{name}/libgvfsdaemon.so
 
 %files devel
 %defattr(644,root,root,755)
@@ -517,8 +520,8 @@ fi
 %if %{with afc}
 %files afc
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-afc-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfsd-afc
+%attr(755,root,root) %{pkglibexecdir}/gvfs-afc-volume-monitor
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-afc
 %{_datadir}/dbus-1/services/org.gtk.vfs.AfcVolumeMonitor.service
 %{_datadir}/gvfs/mounts/afc.mount
 %{_datadir}/gvfs/remote-volume-monitors/afc.monitor
@@ -528,8 +531,8 @@ fi
 %if %{with afp}
 %files afp
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-afp
-%attr(755,root,root) %{_libexecdir}/gvfsd-afp-browse
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-afp
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-afp-browse
 %{_datadir}/gvfs/mounts/afp-browse.mount
 %{_datadir}/gvfs/mounts/afp.mount
 %endif
@@ -537,14 +540,14 @@ fi
 %if %{with archive}
 %files archive
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-archive
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-archive
 %{_datadir}/gvfs/mounts/archive.mount
 %endif
 
 %if %{with fuse}
 %files fuse
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-fuse
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-fuse
 %if %{with doc}
 %{_mandir}/man1/gvfsd-fuse.1*
 %endif
@@ -557,7 +560,7 @@ fi
 %if %{with goa}
 %files goa
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-goa-volume-monitor
+%attr(755,root,root) %{pkglibexecdir}/gvfs-goa-volume-monitor
 %{_datadir}/dbus-1/services/org.gtk.vfs.GoaVolumeMonitor.service
 %{_datadir}/gvfs/remote-volume-monitors/goa.monitor
 %{systemduserunitdir}/gvfs-goa-volume-monitor.service
@@ -566,15 +569,15 @@ fi
 %if %{with google}
 %files google
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-google
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-google
 %{_datadir}/gvfs/mounts/google.mount
 %endif
 
 %if %{with gphoto2}
 %files gphoto2
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-gphoto2-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfsd-gphoto2
+%attr(755,root,root) %{pkglibexecdir}/gvfs-gphoto2-volume-monitor
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-gphoto2
 %{_datadir}/dbus-1/services/org.gtk.vfs.GPhoto2VolumeMonitor.service
 %{_datadir}/gvfs/mounts/gphoto2.mount
 %{_datadir}/gvfs/remote-volume-monitors/gphoto2.monitor
@@ -584,8 +587,8 @@ fi
 %if %{with mtp}
 %files mtp
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfs-mtp-volume-monitor
-%attr(755,root,root) %{_libexecdir}/gvfsd-mtp
+%attr(755,root,root) %{pkglibexecdir}/gvfs-mtp-volume-monitor
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-mtp
 %{_datadir}/dbus-1/services/org.gtk.vfs.MTPVolumeMonitor.service
 %{_datadir}/gvfs/mounts/mtp.mount
 %{_datadir}/gvfs/remote-volume-monitors/mtp.monitor
@@ -595,15 +598,15 @@ fi
 %if %{with onedrive}
 %files onedrive
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-onedrive
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-onedrive
 %{_datadir}/gvfs/mounts/onedrive.mount
 %endif
 
 %if %{with samba}
 %files smb
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb
-%attr(755,root,root) %{_libexecdir}/gvfsd-smb-browse
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-smb
+%attr(755,root,root) %{pkglibexecdir}/gvfsd-smb-browse
 %{_datadir}/gvfs/mounts/smb-browse.mount
 %{_datadir}/gvfs/mounts/smb.mount
 %{_datadir}/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
