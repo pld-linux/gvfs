@@ -322,28 +322,28 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 %build
 %meson \
 	--libexecdir=%{pkglibexecdir} \
-	-Dadmin=%{?with_admin:true}%{!?with_admin:false} \
-	-Dafc=%{?with_afc:true}%{!?with_afc:false} \
-	-Dafp=%{?with_afp:true}%{!?with_afp:false} \
-	-Darchive=%{?with_archive:true}%{!?with_archive:false} \
+	-Dadmin=%{__true_false admin} \
+	-Dafc=%{__true_false afc} \
+	-Dafp=%{__true_false afp} \
+	-Darchive=%{__true_false archive} \
 	%{?with_burn:-Dburn=true} \
-	-Ddnssd=%{?with_avahi:true}%{!?with_avahi:false} \
-	-Dbluray=%{?with_bluray:true}%{!?with_bluray:false} \
-	-Dcdda=%{?with_cdda:true}%{!?with_cdda:false} \
-	-Dfuse=%{?with_fuse:true}%{!?with_fuse:false} \
-	-Dgoa=%{?with_goa:true}%{!?with_goa:false} \
-	-Dgoogle=%{?with_google:true}%{!?with_google:false} \
-	-Dgphoto2=%{?with_gphoto2:true}%{!?with_gphoto2:false} \
-	-Dgudev=%{?with_gudev:true}%{!?with_gudev:false} \
-	-Dhttp=%{?with_http:true}%{!?with_http:false} \
-	-Dkeyring=%{?with_keyring:true}%{!?with_keyring:false} \
-	-Dmtp=%{?with_mtp:true}%{!?with_mtp:false} \
-	-Dman=%{?with_doc:true}%{!?with_doc:false} \
-	-Dnfs=%{?with_nfs:true}%{!?with_nfs:false} \
-	-Donedrive=%{?with_onedrive:true}%{!?with_onedrive:false} \
-	-Dsmb=%{?with_samba:true}%{!?with_samba:false} \
-	-Dlogind=%{?with_systemd:true}%{!?with_systemd:false} \
-	-Dudisks2=%{?with_udisks2:true}%{!?with_udisks2:false} \
+	-Ddnssd=%{__true_false avahi} \
+	-Dbluray=%{__true_false bluray} \
+	-Dcdda=%{__true_false cdda} \
+	-Dfuse=%{__true_false fuse} \
+	-Dgoa=%{__true_false goa} \
+	-Dgoogle=%{__true_false google} \
+	-Dgphoto2=%{__true_false gphoto2} \
+	-Dgudev=%{__true_false gudev} \
+	-Dhttp=%{__true_false http} \
+	-Dkeyring=%{__true_false keyring} \
+	-Dmtp=%{__true_false mtp} \
+	-Dman=%{__true_false doc} \
+	-Dnfs=%{__true_false nfs} \
+	-Donedrive=%{__true_false onedrive} \
+	-Dsmb=%{__true_false samba} \
+	-Dlogind=%{__true_false systemd} \
+	-Dudisks2=%{__true_false udisks2} \
 	-Ddeprecated_apis=true
 
 %meson_build
