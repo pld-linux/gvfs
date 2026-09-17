@@ -39,12 +39,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.60.2
-Release:	2
+Version:	1.60.3
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/gvfs/1.60/%{name}-%{version}.tar.xz
-# Source0-md5:	467f7d017234e5aab24d8e0a4e09deff
+# Source0-md5:	fb32a0e9da6db3840ee9617b9e7ab800
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
