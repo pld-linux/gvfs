@@ -7,7 +7,6 @@
 %bcond_without	archive		# archive support
 %bcond_without	avahi		# DNS-SD / Avahi support
 %bcond_without	bluray		# bluray metadata support
-%bcond_without	burn		# burn backend
 %bcond_without	cdda		# CDDA backend
 %bcond_without	fuse		# FUSE support
 %bcond_without	goa		# GOA backend (needed also for google)
@@ -39,12 +38,12 @@
 Summary:	gvfs - userspace virtual filesystem
 Summary(pl.UTF-8):	gvfs - wirtualny system plików w przestrzeni użytkownika
 Name:		gvfs
-Version:	1.60.3
-Release:	2
+Version:	1.62.0
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/gvfs/1.60/%{name}-%{version}.tar.xz
-# Source0-md5:	fb32a0e9da6db3840ee9617b9e7ab800
+Source0:	https://download.gnome.org/sources/gvfs/1.62/%{name}-%{version}.tar.xz
+# Source0-md5:	a509f63279e9ba30be0a9ebd3c110ed8
 URL:		https://wiki.gnome.org/Projects/gvfs
 %{?with_avahi:BuildRequires:	avahi-devel >= 0.6.22}
 %{?with_avahi:BuildRequires:	avahi-glib-devel >= 0.6.22}
@@ -114,6 +113,7 @@ Requires:	udev-libs >= 1:138
 %{?with_gphoto2:Suggests:	%{name}-gphoto2 = %{version}-%{release}}
 %{?with_mtp:Suggests:	%{name}-mtp = %{version}-%{release}}
 %{?with_samba:Suggests:	%{name}-smb = %{version}-%{release}}
+%{?with_udisks2:Suggests:	lsof}
 Obsoletes:	bash-completion-gvfs < 1.32
 Obsoletes:	gnome-mount <= 0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -137,25 +137,13 @@ Summary(pl.UTF-8):	Wspólne biblioteki współdzielone GVFS
 Group:		Libraries
 Requires:	glib2 >= 1:2.83.0
 Conflicts:	gvfs < 1.22.3-2
+Obsoletes:	gvfs-devel < 1.62.0
 
 %description libs
 Common GVFS (private) shared libraries.
 
 %description libs -l pl.UTF-8
 Wspólne (prywatne) biblioteki współdzielone GVFS.
-
-%package devel
-Summary:	Header files for gvfs library
-Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki gvfs
-Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.83.0
-
-%description devel
-Header files for gvfs library.
-
-%description devel -l pl.UTF-8
-Pliki nagłówkowe biblioteki gvfs.
 
 %package afc
 Summary:	AFC support for gvfs
@@ -326,7 +314,6 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Dafc=%{__true_false afc} \
 	-Dafp=%{__true_false afp} \
 	-Darchive=%{__true_false archive} \
-	%{?with_burn:-Dburn=true} \
 	-Ddnssd=%{__true_false avahi} \
 	-Dbluray=%{__true_false bluray} \
 	-Dcdda=%{__true_false cdda} \
@@ -343,8 +330,7 @@ sieciowych Windows (SMB) dla aplikacji wykorzystujących gvfs.
 	-Donedrive=%{__true_false onedrive} \
 	-Dsmb=%{__true_false samba} \
 	-Dlogind=%{__true_false systemd} \
-	-Dudisks2=%{__true_false udisks2} \
-	-Ddeprecated_apis=true
+	-Dudisks2=%{__true_false udisks2}
 
 %meson_build
 
@@ -454,12 +440,6 @@ fi
 %{_datadir}/polkit-1/rules.d/org.gtk.vfs.file-operations.rules
 %endif
 
-# burn
-%if %{with burn}
-%attr(755,root,root) %{pkglibexecdir}/gvfsd-burn
-%{_datadir}/gvfs/mounts/burn.mount
-%endif
-
 # cdda
 %if %{with cdda}
 %attr(755,root,root) %{pkglibexecdir}/gvfsd-cdda
@@ -512,10 +492,6 @@ fi
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/libgvfscommon.so
 %{_libdir}/%{name}/libgvfsdaemon.so
-
-%files devel
-%defattr(644,root,root,755)
-%{_includedir}/gvfs-client
 
 %if %{with afc}
 %files afc
